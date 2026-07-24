@@ -13,12 +13,15 @@
   },
   "formspreeId": "xykrbgok",
   "hero": {
-    "label": "Editor",
     "headline": "Tyler Cherman",
-    "blurb": "Trailers, commercials, series, documentary.",
+    "roles": ["Editor", "Creative"],
     "credit": "The Last Ranger",
     "video": null,
     "_videoNote": "Set to \"/video/hero.mp4\" once the file is in public/video/. While null, the placeholder still is used. See public/video/README.md for export specs."
+  },
+  "work": {
+    "heading": "Selected Work",
+    "subhead": "Trailers, commercials, series, documentary."
   },
   "nav": [
     { "label": "Work", "href": "/" },
@@ -26,9 +29,7 @@
     { "label": "Resume", "href": "/resume" },
     { "label": "Contact", "href": "/contact" }
   ],
-  "social": [
-    { "label": "Vimeo", "href": "https://vimeo.com/etceteraentertainment" }
-  ],
+  "social": [],
   "sameAs": [
     "https://vimeo.com/etceteraentertainment"
   ],

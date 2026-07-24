@@ -74,6 +74,9 @@ const isCurrent = (href: string) => {
           <a href={`mailto:${site.email}`}>{site.email}</a>
         </p>
 
+        {/* site.social is empty — Tyler doesn't want the site linking out to
+            Vimeo. Kept as a loop so adding Instagram or TikTok later is a JSON
+            edit rather than a template change. */}
         {site.social.length > 0 && (
           <ul class="footer-social">
             {site.social.map((s) => (
@@ -87,6 +90,28 @@ const isCurrent = (href: string) => {
     </footer>
   </body>
 </html>
+
+<script>
+  /*
+   * On the homepage the header floats transparently over the hero. Give it its
+   * background back once the hero is out of view, otherwise the nav sits on the
+   * work thumbnails and is illegible over bright frames.
+   *
+   * An IntersectionObserver on a 1px sentinel at the bottom of the hero, rather
+   * than a scroll listener — no work on every frame, and it stays correct if the
+   * hero's height changes.
+   */
+  const header = document.querySelector('.site-header--over');
+  const hero = document.querySelector('.hero');
+
+  if (header && hero) {
+    const observer = new IntersectionObserver(
+      ([entry]) => header.classList.toggle('is-scrolled', !entry.isIntersecting),
+      { rootMargin: '-70px 0px 0px 0px', threshold: 0 }
+    );
+    observer.observe(hero);
+  }
+</script>
 
 <style>
   /* ---------- Header ---------- */
@@ -110,6 +135,19 @@ const isCurrent = (href: string) => {
     background: transparent;
     backdrop-filter: none;
     border-bottom-color: transparent;
+    transition: background var(--dur-base) var(--ease),
+                border-color var(--dur-base) var(--ease);
+  }
+
+  /*
+   * Once the hero has scrolled away, the header must take its background back.
+   * Left transparent, the nav sits directly on the work thumbnails and becomes
+   * unreadable over any bright frame. Toggled by the script below.
+   */
+  .site-header--over.is-scrolled {
+    background: color-mix(in srgb, var(--c-bg) 88%, transparent);
+    backdrop-filter: blur(12px);
+    border-bottom-color: var(--c-line);
   }
 
   .header-inner {

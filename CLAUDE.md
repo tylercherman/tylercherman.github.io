@@ -63,9 +63,20 @@ or lightbox, never shouted. See PLAN.md §6.1.
 ```bash
 npm run add-work https://vimeo.com/905002018   # add a piece; fetches title, size, poster
 npm run list-work                              # show everything in display order
+npm run set-poster <slug> <image>              # replace a thumbnail with your own frame
+npm run fix-posters --apply                    # strip letterbox bars from posters
 npm run dev                                    # preview at http://127.0.0.1:4321
 npm run build                                  # must pass before any change is "done"
 ```
+
+Thumbnails are cropped to a uniform 16:9 by `object-fit`, with the anchor set per
+piece via `posterPosition`. Cropping a 9:16 vertical to 16:9 keeps only ~31% of the
+frame, so for those, a purpose-exported horizontal frame via `set-poster` beats any
+crop. `set-poster` strips metadata (one of Tyler's source photos carried GPS).
+
+Tile labels are TITLE + runtime on every tile, deliberately. An earlier version
+showed client-or-category, which read inconsistently — brand work said "ADIDAS"
+while indie films said "TRAILER". Client belongs in the lightbox title bar.
 
 Note the dev server binds IPv4 only — use `127.0.0.1:4321`, not `localhost:4321`.
 

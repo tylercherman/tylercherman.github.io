@@ -7,6 +7,7 @@ vimeoId: "905005161"
 width: 1920
 height: 1080
 duration: 68
+posterPosition: "center"
 poster: ../../assets/posters/honey-perfect-man.jpg
 alt: "Still from the commercial for Honey — The Perfect Man, edited by Tyler Cherman."
 draft: false

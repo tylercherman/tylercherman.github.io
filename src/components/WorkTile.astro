@@ -2,14 +2,17 @@
 /**
  * A tile in the work grid.
  *
- * All thumbnails are a uniform 16:9 regardless of the source video's shape — the
- * mixed ratios read as untidy in a grid. The lightbox then plays each piece at its
- * true aspect ratio, so nothing is actually lost: the crop is presentation only.
+ * Uniform 16:9 thumbnails; the lightbox plays each piece at its true aspect ratio,
+ * so the crop is presentation only. `data-ar` carries the real ratio through.
  *
- * `data-ar` carries the real ratio through to the lightbox for that reason.
+ * Info is revealed on hover/focus rather than always shown — visuals lead, per
+ * PLAN.md §6.1.
  *
- * Metadata is always visible rather than hover-revealed: it works on touch, it
- * doesn't hide information behind an interaction, and it matches the reference.
+ * The label is deliberately just TITLE + runtime on every tile. An earlier version
+ * showed the client name when one existed and fell back to the category when it
+ * didn't, which meant brand work read "ADIDAS" while indie films read "TRAILER" —
+ * inconsistent in kind, not just content. Client now appears in the lightbox title
+ * bar, where it's shown the same way for everything.
  */
 import { Image } from 'astro:assets';
 import type { CollectionEntry } from 'astro:content';
@@ -31,8 +34,6 @@ const runtime =
   minutes !== null && seconds !== null
     ? `${minutes}:${String(seconds).padStart(2, '0')}`
     : null;
-
-const kindLabel = { trailer: 'Trailer', brand: 'Commercial', reel: 'Edit Reel' }[d.category];
 ---
 
 <button
@@ -58,21 +59,18 @@ const kindLabel = { trailer: 'Trailer', brand: 'Commercial', reel: 'Edit Reel' }
     <span class="tile-scrim" aria-hidden="true"></span>
 
     <span class="tile-play" aria-hidden="true">
-      <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
         <path d="M8 5.14v13.72L19 12 8 5.14Z" />
       </svg>
     </span>
 
     <span class="tile-info">
-      <span class="tile-kind">{d.client ?? kindLabel}</span>
       <span class="tile-title">{d.title}</span>
-      <span class="tile-meta">
-        <span>{d.role}</span>
-        {runtime && <><span aria-hidden="true">·</span><span class="tile-runtime">{runtime}</span></>}
-      </span>
+      {runtime && <span class="tile-runtime">{runtime}</span>}
     </span>
   </span>
 
+  {/* The full label, always available to screen readers regardless of hover. */}
   <span class="visually-hidden">
     Play {d.client ? `${d.client} — ` : ''}{d.title}{runtime ? `, ${runtime}` : ''}
   </span>
@@ -93,23 +91,17 @@ const kindLabel = { trailer: 'Trailer', brand: 'Commercial', reel: 'Edit Reel' }
   .tile-media {
     position: relative;
     display: block;
-    /* Uniform across every piece — this is the change. */
     aspect-ratio: 16 / 9;
     overflow: hidden;
     background: var(--c-bg-raised);
     border-radius: var(--radius);
-    border: 1px solid var(--c-line);
-    transition: border-color var(--dur-base) var(--ease);
   }
-
-  .tile:hover .tile-media,
-  .tile:focus-visible .tile-media { border-color: var(--c-line-strong); }
 
   .tile-poster {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    filter: brightness(0.82) saturate(0.92);
+    filter: brightness(0.88) saturate(0.94);
     transition: transform var(--dur-slow) var(--ease), filter var(--dur-base) var(--ease);
   }
 
@@ -119,77 +111,89 @@ const kindLabel = { trailer: 'Trailer', brand: 'Commercial', reel: 'Edit Reel' }
     transform: scale(1.04);
   }
 
-  /* Always present — the info sits on it permanently, so it can't be hover-only. */
+  /* Hidden at rest — the image is the whole tile until you interact with it. */
   .tile-scrim {
     position: absolute;
     inset: 0;
     background: linear-gradient(
       to top,
-      rgba(6, 6, 7, 0.88) 0%,
-      rgba(6, 6, 7, 0.45) 34%,
-      rgba(6, 6, 7, 0.05) 68%
+      rgba(6, 6, 7, 0.82) 0%,
+      rgba(6, 6, 7, 0.30) 42%,
+      transparent 72%
     );
+    opacity: 0;
+    transition: opacity var(--dur-base) var(--ease);
   }
+
+  .tile:hover .tile-scrim,
+  .tile:focus-visible .tile-scrim { opacity: 1; }
 
   .tile-play {
     position: absolute;
-    top: var(--s-3);
-    right: var(--s-3);
+    top: 50%;
+    left: 50%;
+    translate: -50% -50%;
     display: grid;
     place-items: center;
-    width: 2.25rem;
-    height: 2.25rem;
+    width: 3rem;
+    height: 3rem;
     border-radius: 50%;
-    background: color-mix(in srgb, var(--c-bg) 45%, transparent);
+    background: color-mix(in srgb, var(--c-bg) 40%, transparent);
     backdrop-filter: blur(6px);
     border: 1px solid var(--c-line-strong);
     color: var(--c-text);
     opacity: 0;
-    scale: 0.92;
+    scale: 0.88;
     transition: opacity var(--dur-base) var(--ease), scale var(--dur-base) var(--ease);
   }
 
-  .tile-play svg { translate: 1px 0; }
+  .tile-play svg { translate: 2px 0; }
 
   .tile:hover .tile-play,
   .tile:focus-visible .tile-play { opacity: 1; scale: 1; }
 
-  /* ---------- Info block: always visible ---------- */
+  /* ---------- Info: hover-revealed, identical structure on every tile ---------- */
   .tile-info {
     position: absolute;
     inset-inline: 0;
     bottom: 0;
-    display: grid;
-    gap: 2px;
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--s-3);
     padding: var(--s-4);
+    opacity: 0;
+    translate: 0 8px;
+    transition: opacity var(--dur-base) var(--ease), translate var(--dur-base) var(--ease);
   }
 
-  .tile-kind {
-    font-size: var(--t-xs);
-    text-transform: uppercase;
-    letter-spacing: var(--tracking-wider);
-    color: var(--c-text-muted);
-  }
+  .tile:hover .tile-info,
+  .tile:focus-visible .tile-info { opacity: 1; translate: 0 0; }
 
   .tile-title {
-    font-size: var(--t-base);
+    font-size: var(--t-sm);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-wide);
     color: var(--c-text);
     line-height: var(--lh-snug);
   }
 
-  .tile-meta {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--s-2);
+  .tile-runtime {
+    flex: 0 0 auto;
+    font-family: var(--font-mono);
     font-size: var(--t-xs);
-    color: var(--c-text-faint);
-    margin-top: 1px;
+    color: var(--c-text-muted);
+    font-variant-numeric: tabular-nums;
   }
 
-  .tile-runtime { font-variant-numeric: tabular-nums; }
-
+  /*
+   * Touch devices have no hover, so a hover-only label would be unreachable.
+   * Reveal it there — but keep it quiet.
+   */
   @media (hover: none) {
-    .tile-play { opacity: 0.8; scale: 1; }
-    .tile-poster { filter: brightness(0.9); }
+    .tile-scrim { opacity: 1; }
+    .tile-info { opacity: 1; translate: 0 0; }
+    .tile-play { opacity: 0.75; scale: 1; }
+    .tile-poster { filter: none; }
   }
 </style>
