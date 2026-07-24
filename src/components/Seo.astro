@@ -21,12 +21,24 @@ interface Props {
 const { title, description, ogImage, noSchema = false } = Astro.props;
 
 const desc = description ?? site.description;
-const canonical = new URL(Astro.url.pathname, Astro.site).href;
+
+/**
+ * `build.format: 'file'` means pathnames arrive as `/about.html` and
+ * `/index.html`. GitHub Pages serves the extensionless form too, and the sitemap
+ * uses clean URLs — so canonical must be normalized to match, or crawlers see a
+ * canonical that disagrees with the sitemap.
+ */
+const cleanPath = Astro.url.pathname
+  .replace(/index\.html$/, '')
+  .replace(/\.html$/, '')
+  || '/';
+
+const canonical = new URL(cleanPath, Astro.site).href;
 const socialImage = new URL(ogImage ?? '/og-default.jpg', Astro.site).href;
 
 // Home gets the bare name; inner pages get "Page — Name" so tabs and search
 // results stay legible.
-const isHome = Astro.url.pathname === '/' || Astro.url.pathname === '/index.html';
+const isHome = cleanPath === '/';
 const fullTitle = isHome
   ? `${site.name} — Film & Video Editor | ${site.location.city}, ${site.location.region}`
   : `${title} — ${site.name}`;
