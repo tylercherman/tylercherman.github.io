@@ -13,7 +13,8 @@
     "preview": "astro preview",
     "astro": "astro",
     "add-work": "node scripts/add-work.mjs",
-    "list-work": "node scripts/list-work.mjs"
+    "list-work": "node scripts/list-work.mjs",
+    "fix-posters": "node scripts/fix-posters.mjs"
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.7.3",

@@ -57,6 +57,16 @@ const work = defineCollection({
       poster: image(),
 
       /**
+       * Where to anchor the crop inside the uniform 16:9 thumbnail.
+       * Any CSS object-position value ("center", "top", "center 30%").
+       *
+       * Matters most for the vertical and square pieces: cropping a 9:16 frame to
+       * 16:9 discards most of it, and a centre crop can cut a face in half. Set
+       * this per piece when the default crop lands badly.
+       */
+      posterPosition: z.string().default('center'),
+
+      /**
        * Optional short silent loop for the tile (Phase C). Path under /public.
        * A piece with a loop animates; one without shows its poster. Loops can be
        * added one at a time forever, with no code changes.

@@ -1,0 +1,202 @@
+---
+/**
+ * Full-viewport hero.
+ *
+ * Shows an autoplaying muted loop when `hero.video` is set in site.json, and the
+ * placeholder still otherwise — so the layout is real before the video exists, and
+ * dropping the file in is a one-line config change.
+ *
+ * The video is self-hosted rather than streamed from Vimeo on purpose. Vimeo's
+ * direct-file URLs (`progressive_redirect/...`) return 403 without a signed,
+ * expiring token, and embedding the player iframe instead would pull the whole
+ * player bundle — which is the problem this rebuild exists to remove.
+ *
+ * Autoplay requires `muted` AND `playsinline`; without both, mobile Safari
+ * refuses to start and iOS opens fullscreen.
+ */
+import { Image } from 'astro:assets';
+import site from '../data/site.json';
+import placeholder from '../assets/hero-placeholder.jpg';
+
+const hero = site.hero;
+const hasVideo = Boolean(hero.video);
+---
+
+<section class="hero" aria-label="Introduction">
+  <div class="hero-media">
+    {hasVideo ? (
+      <>
+        <video
+          class="hero-video"
+          src={hero.video}
+          autoplay
+          muted
+          loop
+          playsinline
+          preload="metadata"
+          aria-hidden="true"
+          tabindex="-1"
+        ></video>
+
+        {/* Shown when the video is suppressed: reduced motion, or narrow screens
+            where autoplaying megabytes over cellular is hostile. */}
+        <Image
+          src={placeholder}
+          alt=""
+          widths={[900, 1400, 2000, 2400]}
+          sizes="100vw"
+          loading="eager"
+          fetchpriority="high"
+          class="hero-fallback"
+        />
+      </>
+    ) : (
+      <Image
+        src={placeholder}
+        alt=""
+        widths={[900, 1400, 2000, 2400]}
+        sizes="100vw"
+        loading="eager"
+        fetchpriority="high"
+        class="hero-still"
+      />
+    )}
+
+    <div class="hero-scrim" aria-hidden="true"></div>
+  </div>
+
+  <div class="hero-content wrap">
+    <p class="hero-label label">{hero.label}</p>
+    <h1 class="hero-headline">{hero.headline}</h1>
+    <p class="hero-blurb">{hero.blurb}</p>
+
+    <a class="hero-more" href="#work">
+      <span>Selected work</span>
+      <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+        <path d="M12 5v14m0 0l-6-6m6 6l6-6" />
+      </svg>
+    </a>
+  </div>
+
+  {hero.credit && (
+    <p class="hero-credit">{hero.credit}</p>
+  )}
+</section>
+
+<style>
+  .hero {
+    position: relative;
+    /* Full viewport minus the header. dvh so mobile browser chrome doesn't
+       leave a gap or crop the bottom. */
+    min-height: calc(100dvh - 4rem);
+    display: flex;
+    align-items: flex-end;
+    overflow: hidden;
+    /* Cancel the sticky header's space so the media runs to the very top. */
+    margin-top: calc(-1 * var(--s-4));
+    padding-block: var(--s-9) var(--s-8);
+  }
+
+  .hero-media {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+  }
+
+  .hero-video,
+  .hero-still,
+  .hero-fallback {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 35%;
+  }
+
+  /* When a video is present the still is only a fallback — hidden by default. */
+  .hero-fallback { display: none; }
+
+  .hero-scrim {
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(to top, var(--c-bg) 0%, rgba(10, 10, 11, 0.55) 32%, rgba(10, 10, 11, 0.12) 62%, rgba(10, 10, 11, 0.35) 100%);
+  }
+
+  .hero-content {
+    position: relative;
+    z-index: 1;
+  }
+
+  .hero-label { display: block; margin-bottom: var(--s-3); }
+
+  .hero-headline {
+    font-size: var(--t-3xl);
+    font-weight: 400;
+    letter-spacing: -0.03em;
+    line-height: 0.95;
+  }
+
+  .hero-blurb {
+    margin-top: var(--s-4);
+    font-size: var(--t-lg);
+    color: var(--c-text-muted);
+    max-width: 28rem;
+  }
+
+  .hero-more {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--s-2);
+    margin-top: var(--s-6);
+    font-size: var(--t-sm);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-wide);
+    color: var(--c-text-muted);
+    transition: color var(--dur-fast) var(--ease);
+  }
+
+  .hero-more:hover { color: var(--c-text); }
+  .hero-more svg { transition: translate var(--dur-base) var(--ease); }
+  .hero-more:hover svg { translate: 0 3px; }
+
+  /* Hero image credit, bottom-right — mirrors the reference site. */
+  .hero-credit {
+    position: absolute;
+    z-index: 1;
+    right: var(--gutter);
+    bottom: var(--s-5);
+    font-size: var(--t-xs);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-wider);
+    color: var(--c-text-faint);
+  }
+
+  @media (max-width: 46rem) {
+    .hero-credit { display: none; }
+  }
+
+  /*
+   * Suppress the video where autoplaying it would be rude or unwanted:
+   * a reduced-motion preference, or a phone on a cellular connection.
+   */
+  @media (prefers-reduced-motion: reduce), (max-width: 40rem) {
+    .hero-video { display: none; }
+    .hero-fallback { display: block; }
+  }
+</style>
+
+<script>
+  // Save-Data is a request from the visitor not to burn their bandwidth. Honour it
+  // by dropping the video and revealing the still.
+  const nav = navigator as Navigator & { connection?: { saveData?: boolean } };
+  if (nav.connection?.saveData) {
+    document.querySelectorAll<HTMLVideoElement>('.hero-video').forEach((v) => {
+      v.pause();
+      v.removeAttribute('src');
+      v.style.display = 'none';
+    });
+    document.querySelectorAll<HTMLElement>('.hero-fallback').forEach((el) => {
+      el.style.display = 'block';
+    });
+  }
+</script>

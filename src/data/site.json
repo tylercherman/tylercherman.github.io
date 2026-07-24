@@ -12,6 +12,14 @@
     "country": "US"
   },
   "formspreeId": "xykrbgok",
+  "hero": {
+    "label": "Editor",
+    "headline": "Tyler Cherman",
+    "blurb": "Trailers, commercials, series, documentary.",
+    "credit": "The Last Ranger",
+    "video": null,
+    "_videoNote": "Set to \"/video/hero.mp4\" once the file is in public/video/. While null, the placeholder still is used. See public/video/README.md for export specs."
+  },
   "nav": [
     { "label": "Work", "href": "/" },
     { "label": "About", "href": "/about" },

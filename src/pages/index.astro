@@ -1,16 +1,17 @@
 ---
 /**
- * Homepage — the work grid.
+ * Homepage — full-bleed hero, then the work grid.
  *
- * Work is the homepage, matching the current site. All pieces in one grid: no
- * category filters, no separate sections, metadata secondary. PLAN.md §6.1.
+ * Restructured to follow tashitrieu.com: a full-viewport hero, then a titled
+ * section of uniform 16:9 thumbnails, three across.
  *
- * The grid deliberately lets the five aspect ratios (16:9, 9:16, 1:1, 2.35:1, 2:1)
- * read as rhythm rather than forcing them into uniform boxes the way Squarespace
- * does now.
+ * The tiles are cropped to a single ratio for tidiness; the lightbox still plays
+ * every piece at its true aspect ratio, so the verticals and squares are shown
+ * properly once opened.
  */
 import { getCollection } from 'astro:content';
 import Base from '../layouts/Base.astro';
+import Hero from '../components/Hero.astro';
 import WorkTile from '../components/WorkTile.astro';
 import Lightbox from '../components/Lightbox.astro';
 import site from '../data/site.json';
@@ -18,36 +19,53 @@ import site from '../data/site.json';
 const work = (await getCollection('work', ({ data }) => !data.draft)).sort(
   (a, b) => a.data.order - b.data.order
 );
-
-/** Classify each piece so the grid can give it appropriate room. */
-const spanOf = (w: number, h: number) => {
-  const r = w / h;
-  if (r < 0.9) return 'tall';   // 9:16
-  if (r < 1.1) return 'square'; // 1:1
-  if (r > 2.2) return 'scope';  // 2.35:1 and wider
-  return 'wide';                // 16:9, 2:1
-};
 ---
 
-<Base title="Work" description={site.description} wide>
-  <h1 class="visually-hidden">{site.name} — selected work</h1>
+<Base title="Work" description={site.description} wide transparentHeader>
+  <Hero />
 
-  <div class="grid-wrap wrap">
-    <ul class="grid">
-      {work.map((entry, i) => (
-        <li class={`cell cell--${spanOf(entry.data.width, entry.data.height)}`}>
-          <WorkTile entry={entry} priority={i < 3} />
-        </li>
-      ))}
-    </ul>
-  </div>
+  <section class="work-section" id="work" aria-labelledby="work-h">
+    <div class="wrap">
+      <div class="section-head">
+        <h2 class="section-title" id="work-h">Selected Work</h2>
+        <p class="section-count">{work.length} pieces</p>
+      </div>
+
+      <ul class="grid">
+        {work.map((entry, i) => (
+          <li>
+            <WorkTile entry={entry} priority={i < 3} />
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
 
   <Lightbox />
 </Base>
 
 <style>
-  .grid-wrap {
-    padding-block: var(--s-5) var(--s-8);
+  .work-section { padding-block: var(--s-8) var(--s-9); }
+
+  .section-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--s-4);
+    margin-bottom: var(--s-6);
+  }
+
+  .section-title {
+    font-size: var(--t-xl);
+    font-weight: 400;
+    letter-spacing: -0.01em;
+  }
+
+  .section-count {
+    font-size: var(--t-xs);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-wider);
+    color: var(--c-text-faint);
   }
 
   .grid {
@@ -59,29 +77,13 @@ const spanOf = (w: number, h: number) => {
     margin: 0;
   }
 
-  .cell { min-width: 0; }
-
-  /* Two columns from ~40rem. Each tile sizes to its own ratio, so verticals
-     read taller than landscape without any extra rules. */
+  /* Uniform tiles mean a plain column count is all that's needed — no span
+     rules, no ratio special-casing. */
   @media (min-width: 40rem) {
-    .grid {
-      grid-template-columns: repeat(2, 1fr);
-      align-items: start;
-    }
-
-    /* Ultra-wide pieces earn a full row rather than being shown postage-stamp
-       small beside a vertical. */
-    .cell--scope { grid-column: 1 / -1; }
+    .grid { grid-template-columns: repeat(2, 1fr); }
   }
 
-  @media (min-width: 70rem) {
-    .grid { grid-template-columns: repeat(6, 1fr); }
-
-    /* 6-column system: landscape = half, vertical/square = a third,
-       scope = full bleed. Variety without anything looking accidental. */
-    .cell--wide   { grid-column: span 3; }
-    .cell--tall   { grid-column: span 2; }
-    .cell--square { grid-column: span 2; }
-    .cell--scope  { grid-column: span 6; }
+  @media (min-width: 64rem) {
+    .grid { grid-template-columns: repeat(3, 1fr); }
   }
 </style>

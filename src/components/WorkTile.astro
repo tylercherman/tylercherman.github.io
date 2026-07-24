@@ -1,49 +1,45 @@
 ---
 /**
- * A single tile in the work grid.
+ * A tile in the work grid.
  *
- * Visual-first per PLAN.md §6.1: the image leads, metadata is secondary and only
- * surfaces on hover or focus. No titles competing for attention.
+ * All thumbnails are a uniform 16:9 regardless of the source video's shape — the
+ * mixed ratios read as untidy in a grid. The lightbox then plays each piece at its
+ * true aspect ratio, so nothing is actually lost: the crop is presentation only.
  *
- * Critical detail — the wrapper sets `aspect-ratio` from the video's intrinsic
- * dimensions, so the correct space is reserved BEFORE the poster loads. Layout
- * shift as players initialize is the specific bug this rebuild exists to fix;
- * hardcoding a uniform ratio here would reintroduce it.
+ * `data-ar` carries the real ratio through to the lightbox for that reason.
+ *
+ * Metadata is always visible rather than hover-revealed: it works on touch, it
+ * doesn't hide information behind an interaction, and it matches the reference.
  */
 import { Image } from 'astro:assets';
 import type { CollectionEntry } from 'astro:content';
 
 interface Props {
   entry: CollectionEntry<'work'>;
-  /** First few tiles load eagerly; the rest lazily. */
   priority?: boolean;
 }
 
 const { entry, priority = false } = Astro.props;
 const d = entry.data;
 
-const ratio = `${d.width} / ${d.height}`;
-// Numeric ratio (w/h) for the lightbox's fit calculation, which needs to do
-// arithmetic on it and so can't use the `w / h` form.
+/** True ratio, for the lightbox — not for the thumbnail. */
 const ar = (d.width / d.height).toFixed(6);
 
 const minutes = d.duration ? Math.floor(d.duration / 60) : null;
 const seconds = d.duration ? d.duration % 60 : null;
 const runtime =
   minutes !== null && seconds !== null
-    ? minutes > 0
-      ? `${minutes}:${String(seconds).padStart(2, '0')}`
-      : `0:${String(seconds).padStart(2, '0')}`
+    ? `${minutes}:${String(seconds).padStart(2, '0')}`
     : null;
+
+const kindLabel = { trailer: 'Trailer', brand: 'Commercial', reel: 'Edit Reel' }[d.category];
 ---
 
 <button
   class="tile"
-  style={`--ratio: ${ratio};`}
   data-vimeo-id={d.vimeoId}
   data-vimeo-hash={d.vimeoHash ?? ''}
   data-title={d.client ? `${d.client} — ${d.title}` : d.title}
-  data-ratio={ratio}
   data-ar={ar}
   type="button"
 >
@@ -51,25 +47,29 @@ const runtime =
     <Image
       src={d.poster}
       alt={d.alt ?? `${d.title}, edited by Tyler Cherman`}
-      widths={[480, 800, 1200, 1920]}
-      sizes="(max-width: 40rem) 100vw, (max-width: 70rem) 50vw, 33vw"
+      widths={[420, 700, 1000, 1400]}
+      sizes="(max-width: 40rem) 100vw, (max-width: 64rem) 50vw, 33vw"
       loading={priority ? 'eager' : 'lazy'}
       fetchpriority={priority ? 'high' : 'auto'}
       class="tile-poster"
+      style={`object-position: ${d.posterPosition};`}
     />
 
     <span class="tile-scrim" aria-hidden="true"></span>
 
     <span class="tile-play" aria-hidden="true">
-      <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor">
+      <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
         <path d="M8 5.14v13.72L19 12 8 5.14Z" />
       </svg>
     </span>
 
-    <span class="tile-meta">
+    <span class="tile-info">
+      <span class="tile-kind">{d.client ?? kindLabel}</span>
       <span class="tile-title">{d.title}</span>
-      {d.client && <span class="tile-client">{d.client}</span>}
-      {runtime && <span class="tile-runtime">{runtime}</span>}
+      <span class="tile-meta">
+        <span>{d.role}</span>
+        {runtime && <><span aria-hidden="true">·</span><span class="tile-runtime">{runtime}</span></>}
+      </span>
     </span>
   </span>
 
@@ -86,123 +86,110 @@ const runtime =
     border: 0;
     background: none;
     cursor: pointer;
+    text-align: left;
     -webkit-tap-highlight-color: transparent;
   }
 
   .tile-media {
     position: relative;
     display: block;
-    /* Reserve exact space before the poster loads. No layout shift. */
-    aspect-ratio: var(--ratio);
+    /* Uniform across every piece — this is the change. */
+    aspect-ratio: 16 / 9;
     overflow: hidden;
     background: var(--c-bg-raised);
     border-radius: var(--radius);
+    border: 1px solid var(--c-line);
+    transition: border-color var(--dur-base) var(--ease);
   }
+
+  .tile:hover .tile-media,
+  .tile:focus-visible .tile-media { border-color: var(--c-line-strong); }
 
   .tile-poster {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    transition: transform var(--dur-slow) var(--ease),
-                filter var(--dur-base) var(--ease);
+    filter: brightness(0.82) saturate(0.92);
+    transition: transform var(--dur-slow) var(--ease), filter var(--dur-base) var(--ease);
   }
-
-  /* Slightly muted at rest so hover feels like the work coming alive. */
-  .tile-poster { filter: saturate(0.9) brightness(0.88); }
 
   .tile:hover .tile-poster,
   .tile:focus-visible .tile-poster {
-    filter: saturate(1) brightness(1);
-    transform: scale(1.03);
+    filter: brightness(1) saturate(1);
+    transform: scale(1.04);
   }
 
+  /* Always present — the info sits on it permanently, so it can't be hover-only. */
   .tile-scrim {
     position: absolute;
     inset: 0;
     background: linear-gradient(
       to top,
-      rgba(6, 6, 7, 0.72) 0%,
-      rgba(6, 6, 7, 0.18) 38%,
-      transparent 65%
+      rgba(6, 6, 7, 0.88) 0%,
+      rgba(6, 6, 7, 0.45) 34%,
+      rgba(6, 6, 7, 0.05) 68%
     );
-    opacity: 0;
-    transition: opacity var(--dur-base) var(--ease);
   }
 
-  .tile:hover .tile-scrim,
-  .tile:focus-visible .tile-scrim { opacity: 1; }
-
-  /* ---------- Play affordance ---------- */
   .tile-play {
     position: absolute;
-    top: 50%;
-    left: 50%;
-    translate: -50% -50%;
+    top: var(--s-3);
+    right: var(--s-3);
     display: grid;
     place-items: center;
-    width: 3.25rem;
-    height: 3.25rem;
+    width: 2.25rem;
+    height: 2.25rem;
     border-radius: 50%;
-    background: color-mix(in srgb, var(--c-bg) 55%, transparent);
+    background: color-mix(in srgb, var(--c-bg) 45%, transparent);
     backdrop-filter: blur(6px);
     border: 1px solid var(--c-line-strong);
     color: var(--c-text);
     opacity: 0;
-    scale: 0.9;
+    scale: 0.92;
     transition: opacity var(--dur-base) var(--ease), scale var(--dur-base) var(--ease);
   }
 
-  .tile-play svg { translate: 2px 0; }
+  .tile-play svg { translate: 1px 0; }
 
   .tile:hover .tile-play,
   .tile:focus-visible .tile-play { opacity: 1; scale: 1; }
 
-  /* ---------- Metadata: secondary, revealed on interaction ---------- */
-  .tile-meta {
+  /* ---------- Info block: always visible ---------- */
+  .tile-info {
     position: absolute;
     inset-inline: 0;
     bottom: 0;
-    display: flex;
-    flex-wrap: wrap;
-    align-items: baseline;
-    gap: var(--s-2) var(--s-3);
+    display: grid;
+    gap: 2px;
     padding: var(--s-4);
-    opacity: 0;
-    translate: 0 6px;
-    transition: opacity var(--dur-base) var(--ease), translate var(--dur-base) var(--ease);
-    text-align: left;
   }
 
-  .tile:hover .tile-meta,
-  .tile:focus-visible .tile-meta { opacity: 1; translate: 0 0; }
+  .tile-kind {
+    font-size: var(--t-xs);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-wider);
+    color: var(--c-text-muted);
+  }
 
   .tile-title {
-    font-size: var(--t-sm);
-    letter-spacing: var(--tracking-wide);
-    text-transform: uppercase;
+    font-size: var(--t-base);
     color: var(--c-text);
+    line-height: var(--lh-snug);
   }
 
-  .tile-client {
+  .tile-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--s-2);
     font-size: var(--t-xs);
-    color: var(--c-text-muted);
+    color: var(--c-text-faint);
+    margin-top: 1px;
   }
 
-  .tile-runtime {
-    margin-left: auto;
-    font-family: var(--font-mono);
-    font-size: var(--t-xs);
-    color: var(--c-text-muted);
-    font-variant-numeric: tabular-nums;
-  }
+  .tile-runtime { font-variant-numeric: tabular-nums; }
 
-  /* On touch devices there is no hover, so metadata is always visible —
-     otherwise it would be permanently unreachable. */
   @media (hover: none) {
-    .tile-scrim,
-    .tile-meta { opacity: 1; }
-    .tile-meta { translate: 0 0; }
-    .tile-play { opacity: 0.85; scale: 1; }
-    .tile-poster { filter: none; }
+    .tile-play { opacity: 0.8; scale: 1; }
+    .tile-poster { filter: brightness(0.9); }
   }
 </style>

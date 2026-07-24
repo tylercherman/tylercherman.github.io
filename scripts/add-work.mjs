@@ -29,6 +29,7 @@ import {
   slugify,
   orientationOf,
 } from './lib/vimeo.mjs';
+import { stripLetterbox } from './lib/letterbox.mjs';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const WORK_DIR = join(ROOT, 'src/content/work');
@@ -125,6 +126,11 @@ async function main() {
   const posterPath = join(POSTER_DIR, `${slug}.jpg`);
   await download(upgradeThumbnailUrl(meta.thumbnail, 1920), posterPath);
 
+  // Vimeo bakes letterbox bars into thumbnails for anything wider than its
+  // container ratio. Thumbnails are cropped to a uniform 16:9 in the grid, so
+  // bars would show as black bands. Strip them now.
+  const lb = await stripLetterbox(posterPath);
+
   const order = opts.order ? Number(opts.order) : await nextOrder();
   const category = opts.category ?? 'trailer';
   const orientation = orientationOf(meta.width, meta.height);
@@ -157,7 +163,7 @@ async function main() {
 
     file      src/content/work/${slug}.md
     poster    src/assets/posters/${slug}.jpg
-    size      ${meta.width}x${meta.height} (${orientation})
+    size      ${meta.width}x${meta.height} (${orientation})${lb.cropped ? `\n    poster    letterbox bars cropped (${lb.top}px/${lb.bottom}px)` : ''}
     order     ${order}${opts.order ? '' : '  (last — lower the number to move it up)'}
     category  ${category}${opts.category ? '' : '  (default — change if wrong)'}
     ${hash ? 'unlisted  privacy hash captured\n    ' : ''}

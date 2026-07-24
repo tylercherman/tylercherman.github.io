@@ -13,9 +13,11 @@ interface Props {
   ogImage?: string;
   /** Full-bleed pages (the work grid) skip the prose container. */
   wide?: boolean;
+  /** Let a full-bleed hero run underneath the header instead of below it. */
+  transparentHeader?: boolean;
 }
 
-const { title, description, ogImage, wide = false } = Astro.props;
+const { title, description, ogImage, wide = false, transparentHeader = false } = Astro.props;
 const path = Astro.url.pathname;
 
 const isCurrent = (href: string) => {
@@ -33,7 +35,7 @@ const isCurrent = (href: string) => {
   <body>
     <a class="skip-link" href="#main">Skip to content</a>
 
-    <header class="site-header">
+    <header class:list={['site-header', { 'site-header--over': transparentHeader }]}>
       <div class="wrap header-inner">
         <a href="/" class="wordmark" aria-label={`${site.name} — home`}>
           {site.name}
@@ -95,6 +97,19 @@ const isCurrent = (href: string) => {
     background: color-mix(in srgb, var(--c-bg) 88%, transparent);
     backdrop-filter: blur(12px);
     border-bottom: 1px solid var(--c-line);
+  }
+
+  /*
+   * Homepage only: sit over the hero rather than above it, so the media reaches
+   * the top of the viewport. `position: fixed` rather than sticky, because a
+   * sticky header still occupies layout space and would push the hero down.
+   */
+  .site-header--over {
+    position: fixed;
+    inset-inline: 0;
+    background: transparent;
+    backdrop-filter: none;
+    border-bottom-color: transparent;
   }
 
   .header-inner {
