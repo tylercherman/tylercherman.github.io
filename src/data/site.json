@@ -1,0 +1,36 @@
+{
+  "name": "Tyler Cherman",
+  "role": "Editor",
+  "tagline": "Editor — trailers, commercials, series, documentary.",
+  "description": "Tyler Cherman is a film and video editor based in Portland, Oregon, cutting trailers, commercials, TV series and documentary for clients including HBO Max, Netflix, Nike, Adidas, Amazon Studios, Showtime and A&E.",
+  "email": "tycherman@gmail.com",
+  "phone": "(949) 306-1599",
+  "location": {
+    "city": "Portland",
+    "region": "OR",
+    "regionFull": "Oregon",
+    "country": "US"
+  },
+  "formspreeId": "xykrbgok",
+  "nav": [
+    { "label": "Work", "href": "/" },
+    { "label": "About", "href": "/about" },
+    { "label": "Resume", "href": "/resume" },
+    { "label": "Contact", "href": "/contact" }
+  ],
+  "social": [
+    { "label": "Vimeo", "href": "https://vimeo.com/etceteraentertainment" }
+  ],
+  "sameAs": [
+    "https://vimeo.com/etceteraentertainment"
+  ],
+  "knowsAbout": [
+    "Trailer editing",
+    "Commercial editing",
+    "Documentary editing",
+    "Television series editing",
+    "Adobe Premiere Pro",
+    "DaVinci Resolve",
+    "Post-production"
+  ]
+}

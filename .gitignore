@@ -1,0 +1,34 @@
+# build output
+dist/
+# generated types
+.astro/
+
+# dependencies
+node_modules/
+
+# logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+
+# environment variables
+.env
+.env.production
+
+# macOS-specific files
+.DS_Store
+
+# jetbrains setting folder
+.idea/
+
+# Large source material that doesn't need to ship or be versioned.
+# Original camera/phone files and the HEICs — web-ready converted copies live in
+# src/assets/ and public/ instead. The small JSON inventories ARE tracked, since
+# scripts/add-work.mjs and the resume page depend on them.
+_source-material/photos/
+_source-material/*.pdf
+
+# Local Claude Code permission grants — machine-specific, not project config
+.claude/settings.local.json

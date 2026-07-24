@@ -1,0 +1,229 @@
+{
+  "name": "Tyler Cherman",
+  "title": "Creative. Editor.",
+  "location": "Portland, OR",
+  "email": "tycherman@gmail.com",
+  "phone": "(949) 306-1599",
+  "website": "www.tylercherman.com",
+  "epigraph": {
+    "quote": "A great editor is not a cutter, he's a storyteller.",
+    "attribution": "Ridley Scott"
+  },
+  "credits": [
+    {
+      "project": "Game Time",
+      "type": "Marketing Trailer",
+      "client": "Adidas",
+      "role": "Lead Editor",
+      "vimeoId": "949621618"
+    },
+    {
+      "project": "The Last Ranger",
+      "type": "Trailer",
+      "client": null,
+      "role": "Trailer Editor",
+      "note": "2025 Oscar Nominated Short Film",
+      "vimeoId": "1024552311"
+    },
+    {
+      "project": "Taken Together",
+      "type": "Trailer",
+      "client": "HBO Max",
+      "role": "Lead Editor"
+    },
+    {
+      "project": "Lie Detector: Truth or Deception",
+      "type": "Series",
+      "client": "A&E Networks / York & Wilder",
+      "role": "Lead Editor"
+    },
+    {
+      "project": "Le Bal",
+      "type": "Trailer",
+      "client": "HBO Max",
+      "role": "Lead Editor"
+    },
+    {
+      "project": "Nike Suit / Banned Campaign",
+      "type": "Campaign",
+      "client": "Nike / Jordan",
+      "role": "Lead Editor"
+    },
+    {
+      "project": "Neighborhood Wars",
+      "type": "Series",
+      "client": "A&E Networks / Jukin Media",
+      "role": "Lead Editor"
+    },
+    {
+      "project": "The Fight Inside with Ryan Garcia",
+      "type": "Trailer",
+      "client": "Snapchat",
+      "role": "Lead Editor",
+      "vimeoId": "905003704"
+    },
+    {
+      "project": "Buscando Alma",
+      "type": "Short Film",
+      "client": "Ebb Tide Productions",
+      "role": "Lead Editor",
+      "note": "2025 Oscar Qualified",
+      "vimeoId": "948933504"
+    },
+    {
+      "project": "Yarn Bomb",
+      "type": "Pilot & Trailer",
+      "client": "Amazon Studios",
+      "role": "Lead Editor"
+    },
+    {
+      "project": "Julia Michaels",
+      "type": "Behind the Music Documentary Series",
+      "client": "Uproxx / Honda",
+      "role": "Editor",
+      "vimeoId": "905002663"
+    },
+    {
+      "project": "Troye Sivan",
+      "type": "Behind the Music Documentary Series",
+      "client": "Uproxx / Honda",
+      "role": "Editor",
+      "vimeoId": "905003368"
+    },
+    {
+      "project": "The Hot Drop",
+      "type": "Series",
+      "client": "Quibi",
+      "role": "Editor"
+    },
+    {
+      "project": "Glow Up",
+      "type": "Trailer",
+      "client": "Netflix",
+      "role": "Editor"
+    },
+    {
+      "project": "Places",
+      "type": "Documentary Series",
+      "client": "Logitech",
+      "role": "Lead Editor"
+    },
+    {
+      "project": "Athletic Kids",
+      "type": "Commercial",
+      "client": "Nike",
+      "role": "Lead Editor"
+    },
+    {
+      "project": "SNCTM Moscow",
+      "type": "1-Hour Documentary Special",
+      "client": "Showtime",
+      "role": "Lead Editor"
+    },
+    {
+      "project": "Happy it Happened",
+      "type": "Documentary",
+      "client": "Texas Rangers Baseball",
+      "role": "Lead Editor"
+    },
+    {
+      "project": "Operation Christmas",
+      "type": "Trailer",
+      "client": "RMS Titanic Group",
+      "role": "Lead Editor"
+    },
+    {
+      "project": "Anna Nicole Smith",
+      "type": "Trailer",
+      "client": "Netflix",
+      "role": "Lead Editor"
+    },
+    {
+      "project": "Greenworks",
+      "type": "Commercial",
+      "client": "Greenworks Tools",
+      "role": "Lead Editor"
+    },
+    {
+      "project": "Lorac Cosmetics",
+      "type": "Commercial",
+      "client": "LORAC Cosmetics",
+      "role": "Editor / Director / Producer",
+      "vimeoId": "905005281"
+    }
+  ],
+  "experience": [
+    {
+      "role": "Freelance Lead Editor",
+      "company": "Various Clients",
+      "start": 2014,
+      "end": "Current",
+      "bullets": [
+        "Edited high-profile trailers, commercials, documentaries, and social media content for clients including HBO Max, Discovery+, A&E, Snapchat, Amazon Studios, Netflix, and more.",
+        "Collaborated with production and marketing teams to align content with brand and studio directives.",
+        "Ensured all media consistently presented a unified visual aesthetic reflective of client branding.",
+        "Managed project organization, editorial workflow, and quality assurance for video outputs.",
+        "Contributed to brainstorming sessions to develop innovative content strategies."
+      ]
+    },
+    {
+      "role": "Creator / Director / Editor / Shooter",
+      "company": "Etcetera Entertainment, Inc.",
+      "start": 2016,
+      "end": "Current",
+      "bullets": [
+        "Founded and operated a post-production company specializing in short-form content such as trailers, commercials, sizzles, and pilots.",
+        "Worked with high-profile production companies and brands to create engaging and successful video content.",
+        "Directed and produced commercials, handling all aspects from concept development to final edit."
+      ]
+    },
+    {
+      "role": "Development Shooter / Editor",
+      "company": "TwoFour America",
+      "start": 2014,
+      "end": 2016,
+      "bullets": [
+        "Filmed and edited presentations and sizzles leading to series sales.",
+        "Contributed to the development of new television and creative concepts.",
+        "Collaborated with creative teams to ensure content aligned with client vision and objectives."
+      ]
+    },
+    {
+      "role": "Shooter / Editor",
+      "company": "Original Media",
+      "start": 2012,
+      "end": 2014,
+      "bullets": [
+        "Filmed and edited dozens of successful presentations and sizzles.",
+        "Aided in the development of new television and creative concepts.",
+        "Multiple TV shows and projects sold."
+      ]
+    }
+  ],
+  "education": {
+    "school": "Chapman University",
+    "degree": "BFA",
+    "year": 2010
+  },
+  "skills": {
+    "Video Editing": "Mastery in Adobe Premiere and DaVinci Resolve. Well versed in Adobe Suite and Avid.",
+    "Technical Proficiency": "Expertise in technical workflows and media export formats including QuickTime codecs, EDLs, XMLs, and AAFs.",
+    "Post-Production": "Skilled in color correction, audio mixing, and file management.",
+    "Communication": "Strong interpersonal skills; highly collaborative and open to direction.",
+    "Detail-Oriented": "Keen eye for detail, timing, film language, and storytelling."
+  },
+  "notableClients": [
+    "HBO Max",
+    "Netflix",
+    "Nike",
+    "Jordan",
+    "Adidas",
+    "Amazon Studios",
+    "Showtime",
+    "A&E Networks",
+    "Snapchat",
+    "Quibi",
+    "Logitech",
+    "Discovery+"
+  ]
+}

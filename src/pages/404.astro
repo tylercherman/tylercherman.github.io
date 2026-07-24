@@ -1,0 +1,70 @@
+---
+/**
+ * 404 page.
+ *
+ * GitHub Pages serves this automatically for any URL that doesn't exist. Without
+ * it, visitors get GitHub's stark default — with GitHub's branding — on
+ * tylercherman.com. A wrong turn should still look like the site.
+ */
+import Base from '../layouts/Base.astro';
+---
+
+<Base
+  title="Page not found"
+  description="That page doesn't exist. Head back to the work."
+>
+  <div class="notfound wrap-prose">
+    <p class="code label">404</p>
+    <h1 class="notfound-h">That page doesn't exist.</h1>
+    <p class="notfound-p">
+      The link may be out of date, or there's a typo in the address.
+    </p>
+
+    <p class="notfound-links">
+      <a href="/">See the work</a>
+      <span aria-hidden="true">·</span>
+      <a href="/about">About</a>
+      <span aria-hidden="true">·</span>
+      <a href="/contact">Contact</a>
+    </p>
+  </div>
+</Base>
+
+<style>
+  .notfound {
+    padding-block: var(--s-10) var(--s-9);
+    text-align: center;
+  }
+
+  .code { display: block; margin-bottom: var(--s-4); }
+
+  .notfound-h {
+    font-size: var(--t-2xl);
+    font-weight: 400;
+    letter-spacing: -0.015em;
+  }
+
+  .notfound-p {
+    margin-top: var(--s-4);
+    color: var(--c-text-muted);
+  }
+
+  .notfound-links {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--s-3);
+    margin-top: var(--s-7);
+    font-size: var(--t-sm);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-wide);
+    color: var(--c-text-faint);
+  }
+
+  .notfound-links a {
+    color: var(--c-text-muted);
+    border-bottom: 1px solid var(--c-line-strong);
+  }
+
+  .notfound-links a:hover { color: var(--c-text); border-color: var(--c-text); }
+</style>

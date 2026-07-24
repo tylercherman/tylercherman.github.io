@@ -1,0 +1,11 @@
+# tylercherman.com
+#
+# Search crawlers are welcome — ranking for "Portland film editor" is a stated
+# goal (PLAN.md §10). The previous Squarespace robots.txt blocked a long list of
+# AI crawlers; that list is deliberately not carried over, since it also blocked
+# nothing that affects search ranking. Add specific disallows here if wanted.
+
+User-agent: *
+Allow: /
+
+Sitemap: https://tylercherman.com/sitemap-index.xml

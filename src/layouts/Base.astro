@@ -1,0 +1,205 @@
+---
+/**
+ * Base layout — every page inherits this.
+ * Header, footer, skip link, and the SEO head.
+ */
+import Seo from '../components/Seo.astro';
+import site from '../data/site.json';
+import '../styles/tokens.css';
+
+interface Props {
+  title: string;
+  description?: string;
+  ogImage?: string;
+  /** Full-bleed pages (the work grid) skip the prose container. */
+  wide?: boolean;
+}
+
+const { title, description, ogImage, wide = false } = Astro.props;
+const path = Astro.url.pathname;
+
+const isCurrent = (href: string) => {
+  if (href === '/') return path === '/' || path === '/index.html';
+  return path === href || path === `${href}.html` || path.startsWith(`${href}/`);
+};
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <Seo title={title} description={description} ogImage={ogImage} />
+  </head>
+
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+
+    <header class="site-header">
+      <div class="wrap header-inner">
+        <a href="/" class="wordmark" aria-label={`${site.name} — home`}>
+          {site.name}
+        </a>
+
+        <nav aria-label="Primary">
+          <ul class="nav-list">
+            {site.nav.map((item) => (
+              <li>
+                <a
+                  href={item.href}
+                  class="nav-link"
+                  aria-current={isCurrent(item.href) ? 'page' : undefined}
+                >
+                  {item.label}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </nav>
+      </div>
+    </header>
+
+    <main id="main" class={wide ? '' : 'main-prose'}>
+      <slot />
+    </main>
+
+    <footer class="site-footer">
+      <div class="wrap footer-inner">
+        <p class="footer-name">{site.name}</p>
+
+        <p class="footer-meta">
+          {/* Location signal for local search — quiet, sitewide, not in the hero. */}
+          <span>{site.location.city}, {site.location.region}</span>
+          <span aria-hidden="true">·</span>
+          <a href={`mailto:${site.email}`}>{site.email}</a>
+        </p>
+
+        {site.social.length > 0 && (
+          <ul class="footer-social">
+            {site.social.map((s) => (
+              <li>
+                <a href={s.href} rel="me noopener" target="_blank">{s.label}</a>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+    </footer>
+  </body>
+</html>
+
+<style>
+  /* ---------- Header ---------- */
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: color-mix(in srgb, var(--c-bg) 88%, transparent);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--c-line);
+  }
+
+  .header-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--s-4);
+    min-height: 4rem;
+    flex-wrap: wrap;
+  }
+
+  .wordmark {
+    font-size: var(--t-sm);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-wider);
+    font-weight: 500;
+    white-space: nowrap;
+  }
+
+  .nav-list {
+    display: flex;
+    gap: clamp(var(--s-4), 3vw, var(--s-6));
+    list-style: none;
+    padding: 0;
+  }
+
+  .nav-link {
+    font-size: var(--t-sm);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-wide);
+    color: var(--c-text-muted);
+    transition: color var(--dur-fast) var(--ease);
+    padding-block: var(--s-2);
+  }
+
+  .nav-link:hover,
+  .nav-link[aria-current='page'] {
+    color: var(--c-text);
+  }
+
+  /* ---------- Main ---------- */
+  main { flex: 1 0 auto; }
+
+  .main-prose {
+    padding-block: var(--s-8) var(--s-9);
+  }
+
+  /* ---------- Footer ---------- */
+  .site-footer {
+    border-top: 1px solid var(--c-line);
+    padding-block: var(--s-7);
+    /* No margin-top: `main { flex: 1 0 auto }` already pushes the footer to the
+       bottom on short pages, and adding margin on top of that double-spaces it. */
+  }
+
+  .footer-inner {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: var(--s-3) var(--s-6);
+  }
+
+  .footer-name {
+    font-size: var(--t-sm);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-wider);
+  }
+
+  .footer-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--s-3);
+    font-size: var(--t-sm);
+    color: var(--c-text-muted);
+  }
+
+  .footer-meta a { border-bottom: 1px solid var(--c-line-strong); }
+  .footer-meta a:hover { color: var(--c-text); }
+
+  .footer-social {
+    display: flex;
+    gap: var(--s-4);
+    list-style: none;
+    padding: 0;
+    margin-left: auto;
+    font-size: var(--t-sm);
+    color: var(--c-text-muted);
+  }
+
+  .footer-social a:hover { color: var(--c-text); }
+
+  @media (max-width: 30rem) {
+    .footer-social { margin-left: 0; }
+  }
+
+  /* The header is sticky, so on a phone every pixel it occupies is a pixel of
+     work the visitor can't see. Tighten it where it wraps to two rows. */
+  @media (max-width: 34rem) {
+    .header-inner {
+      min-height: 0;
+      padding-block: var(--s-3);
+      gap: var(--s-2);
+    }
+
+    .nav-list { gap: var(--s-4); }
+    .nav-link { padding-block: 0; }
+  }
+</style>

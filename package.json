@@ -1,0 +1,22 @@
+{
+  "name": "tylercherman-com",
+  "type": "module",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Portfolio site for Tyler Cherman, editor.",
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro",
+    "add-work": "node scripts/add-work.mjs",
+    "list-work": "node scripts/list-work.mjs"
+  },
+  "dependencies": {
+    "@astrojs/sitemap": "^3.7.3",
+    "astro": "^7.1.3"
+  }
+}

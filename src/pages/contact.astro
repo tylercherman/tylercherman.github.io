@@ -1,0 +1,267 @@
+---
+/**
+ * Contact page.
+ *
+ * Posts to Formspree — the site is static HTML with no server, so it can't process
+ * a submission itself. Formspree receives the POST and emails Tyler.
+ *
+ * Submitted via fetch so the visitor stays on the site and gets an inline success
+ * message, rather than being bounced to a Formspree thank-you page. If JavaScript
+ * is unavailable the plain form POST still works — that's why `action` and `method`
+ * are real attributes rather than being wired up in script.
+ */
+import Base from '../layouts/Base.astro';
+import site from '../data/site.json';
+
+const endpoint = `https://formspree.io/f/${site.formspreeId}`;
+
+const description =
+  `Get in touch with ${site.name}, film and video editor based in ` +
+  `${site.location.city}, ${site.location.regionFull}.`;
+---
+
+<Base title="Contact" description={description} wide>
+  <div class="contact wrap">
+    <div class="contact-grid">
+      <div class="contact-intro">
+        <h1 class="contact-h">Get in touch</h1>
+        <p class="contact-lede">
+          Tell me about the project. Format, length, timeline, and where it's going.
+        </p>
+
+        <p class="contact-direct">
+          {/*
+            Astro 7 collapses whitespace between elements per JSX conventions, so
+            a newline before a link no longer renders as a space. The explicit
+            {' '} is required or this reads "directly attycherman@gmail.com".
+          */}
+          Or email me directly at{' '}
+          <a href={`mailto:${site.email}`}>{site.email}</a>.
+        </p>
+      </div>
+
+      <form
+        class="form"
+        id="contact-form"
+        action={endpoint}
+        method="POST"
+        novalidate
+      >
+        <div class="field">
+          <label for="name">Name</label>
+          <input id="name" name="name" type="text" autocomplete="name" required />
+        </div>
+
+        <div class="field">
+          <label for="email">Email</label>
+          {/*
+            A field literally named "email" is what Formspree uses for the
+            notification's Reply-To, so Tyler can just hit reply.
+          */}
+          <input id="email" name="email" type="email" autocomplete="email" required />
+        </div>
+
+        <div class="field">
+          <label for="project">Project <span class="optional">(optional)</span></label>
+          <input id="project" name="project" type="text" />
+        </div>
+
+        <div class="field">
+          <label for="message">Message</label>
+          <textarea id="message" name="message" rows="7" required></textarea>
+        </div>
+
+        {/*
+          Honeypot. Hidden with CSS, NOT type="hidden" — bots skip genuinely
+          hidden inputs but happily fill ones they can see in the DOM. Formspree
+          silently discards any submission where this has a value.
+        */}
+        <input
+          class="visually-hidden"
+          type="text"
+          name="_gotcha"
+          tabindex="-1"
+          autocomplete="off"
+          aria-hidden="true"
+        />
+
+        <button type="submit" class="submit">Send</button>
+
+        <p class="form-status" id="form-status" role="status" aria-live="polite"></p>
+      </form>
+    </div>
+  </div>
+</Base>
+
+<script>
+  const form = document.getElementById('contact-form') as HTMLFormElement | null;
+  const status = document.getElementById('form-status');
+
+  if (form && status) {
+    const button = form.querySelector('button[type="submit"]') as HTMLButtonElement;
+
+    form.addEventListener('submit', async (event) => {
+      // Let the browser show its own validation UI first.
+      if (!form.checkValidity()) {
+        form.reportValidity();
+        event.preventDefault();
+        return;
+      }
+
+      event.preventDefault();
+      button.disabled = true;
+      status.textContent = 'Sending…';
+      status.dataset.state = 'pending';
+
+      try {
+        const res = await fetch(form.action, {
+          method: 'POST',
+          body: new FormData(form),
+          headers: { Accept: 'application/json' },
+        });
+
+        if (res.ok) {
+          form.reset();
+          status.textContent = "Thanks — that's sent. I'll be in touch.";
+          status.dataset.state = 'ok';
+          button.disabled = false;
+          return;
+        }
+
+        // Formspree returns field-level errors in JSON.
+        const data = await res.json().catch(() => null);
+        const detail = data?.errors?.map((e: { message: string }) => e.message).join(' ');
+        status.textContent =
+          detail || 'Something went wrong sending that. Please email me directly.';
+        status.dataset.state = 'error';
+      } catch {
+        status.textContent =
+          'Could not reach the form service. Please email me directly.';
+        status.dataset.state = 'error';
+      }
+
+      button.disabled = false;
+    });
+  }
+</script>
+
+<style>
+  .contact { padding-block: var(--s-7) var(--s-9); }
+
+  .contact-grid {
+    display: grid;
+    gap: var(--s-7);
+    align-items: start;
+  }
+
+  @media (min-width: 56rem) {
+    .contact-grid {
+      grid-template-columns: minmax(0, 0.85fr) minmax(0, 1fr);
+      gap: var(--s-9);
+    }
+  }
+
+  .contact-h {
+    font-size: var(--t-2xl);
+    font-weight: 400;
+    letter-spacing: -0.015em;
+  }
+
+  .contact-lede {
+    margin-top: var(--s-4);
+    font-size: var(--t-lg);
+    color: var(--c-text-muted);
+    max-width: 26rem;
+  }
+
+  .contact-direct {
+    margin-top: var(--s-5);
+    font-size: var(--t-sm);
+    color: var(--c-text-faint);
+  }
+
+  .contact-direct a {
+    color: var(--c-text-muted);
+    border-bottom: 1px solid var(--c-line-strong);
+  }
+
+  .contact-direct a:hover { color: var(--c-text); border-color: var(--c-text); }
+
+  /* ---------- Form ---------- */
+  .form {
+    display: grid;
+    gap: var(--s-5);
+    max-width: 34rem;
+  }
+
+  .field { display: grid; gap: var(--s-2); }
+
+  .field label {
+    font-size: var(--t-sm);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-wide);
+    color: var(--c-text-muted);
+  }
+
+  .optional {
+    text-transform: none;
+    letter-spacing: 0;
+    color: var(--c-text-faint);
+  }
+
+  input,
+  textarea {
+    width: 100%;
+    padding: var(--s-3);
+    background: var(--c-bg-raised);
+    border: 1px solid var(--c-line);
+    border-radius: var(--radius);
+    color: var(--c-text);
+    transition: border-color var(--dur-fast) var(--ease);
+  }
+
+  input:hover,
+  textarea:hover { border-color: var(--c-line-strong); }
+
+  input:focus,
+  textarea:focus {
+    border-color: var(--c-text-muted);
+    outline: 2px solid var(--c-focus);
+    outline-offset: 1px;
+  }
+
+  textarea { resize: vertical; min-height: 8rem; }
+
+  /* Browser-flagged invalid fields, but only once the user has interacted —
+     :invalid alone would light up empty required fields on first paint. */
+  input:user-invalid,
+  textarea:user-invalid { border-color: #d97066; }
+
+  .submit {
+    justify-self: start;
+    padding: var(--s-3) var(--s-6);
+    background: var(--c-text);
+    color: var(--c-bg);
+    border: 1px solid var(--c-text);
+    border-radius: var(--radius);
+    font-size: var(--t-sm);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-wide);
+    cursor: pointer;
+    transition: opacity var(--dur-fast) var(--ease);
+  }
+
+  .submit:hover { opacity: 0.85; }
+  .submit:disabled { opacity: 0.5; cursor: default; }
+
+  .form-status:empty { display: none; }
+
+  .form-status {
+    font-size: var(--t-sm);
+    padding: var(--s-3) 0;
+  }
+
+  .form-status[data-state='pending'] { color: var(--c-text-muted); }
+  .form-status[data-state='ok']      { color: #7fc99a; }
+  .form-status[data-state='error']   { color: #e08b81; }
+</style>

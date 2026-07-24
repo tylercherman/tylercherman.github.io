@@ -1,0 +1,342 @@
+---
+/**
+ * Resume page.
+ *
+ * Driven entirely by src/data/resume.json — edit that file and this page follows.
+ * The PDF in /public stays downloadable for producers who want to file or forward
+ * it, per the "both HTML and PDF" decision.
+ *
+ * This page carries more weight than a resume page normally would: with no credits
+ * banner on the homepage (PLAN.md §6.3), it is the ONLY place the HBO Max, Netflix,
+ * Nike, Amazon Studios, Showtime and Oscar credits appear. It's also the densest
+ * indexable text on the site, which matters for the local-search goal in §10.
+ */
+import Base from '../layouts/Base.astro';
+import resume from '../data/resume.json';
+import site from '../data/site.json';
+
+const description =
+  `Resume and selected credits for ${resume.name}, ${resume.title.replace(/\.$/, '')} ` +
+  `based in ${resume.location} — trailers, commercials, series and documentary for ` +
+  `HBO Max, Netflix, Nike, Adidas, Amazon Studios, Showtime and A&E.`;
+
+/** Compose the "Type — Client" line, skipping whichever part is missing. */
+const credited = (c: (typeof resume.credits)[number]) =>
+  [c.type, c.client].filter(Boolean).join(' · ');
+---
+
+<Base title="Resume" description={description} wide>
+  <div class="resume wrap">
+    <header class="resume-head">
+      <div>
+        <h1 class="resume-name">{resume.name}</h1>
+        <p class="resume-title">{resume.title}</p>
+      </div>
+
+      <div class="resume-actions">
+        <a class="btn" href={resume.pdf} download>
+          Download PDF
+          <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true">
+            <path d="M12 4v11m0 0l-4-4m4 4l4-4M5 19h14" />
+          </svg>
+        </a>
+        <p class="resume-contact">
+          <span>{resume.location}</span>
+          <span aria-hidden="true">·</span>
+          <a href={`mailto:${resume.email}`}>{resume.email}</a>
+        </p>
+      </div>
+    </header>
+
+    <section class="section" aria-labelledby="credits-h">
+      <h2 class="section-h label" id="credits-h">Selected Credits</h2>
+      <ul class="credits">
+        {resume.credits.map((c) => (
+          <li class="credit">
+            <span class="credit-project">
+              {c.project}
+              {c.note && <span class="credit-note">{c.note}</span>}
+            </span>
+            <span class="credit-type">{credited(c)}</span>
+            <span class="credit-role">{c.role}</span>
+          </li>
+        ))}
+      </ul>
+    </section>
+
+    <section class="section" aria-labelledby="experience-h">
+      <h2 class="section-h label" id="experience-h">Experience</h2>
+      <div class="roles">
+        {resume.experience.map((job) => (
+          <article class="role">
+            <header class="role-head">
+              <h3 class="role-title">{job.role}</h3>
+              <p class="role-company">{job.company}</p>
+              <p class="role-dates">{job.start} – {job.end}</p>
+            </header>
+            <ul class="role-bullets">
+              {job.bullets.map((b) => <li>{b}</li>)}
+            </ul>
+          </article>
+        ))}
+      </div>
+    </section>
+
+    <div class="section-split">
+      <section class="section" aria-labelledby="education-h">
+        <h2 class="section-h label" id="education-h">Education</h2>
+        <p class="edu">
+          <strong>{resume.education.school}</strong><br />
+          {resume.education.degree}, {resume.education.year}
+        </p>
+      </section>
+
+      <section class="section" aria-labelledby="skills-h">
+        <h2 class="section-h label" id="skills-h">Skills</h2>
+        <dl class="skills">
+          {Object.entries(resume.skills).map(([name, detail]) => (
+            <div class="skill">
+              <dt>{name}</dt>
+              <dd>{detail}</dd>
+            </div>
+          ))}
+        </dl>
+      </section>
+    </div>
+
+    {resume.epigraph && (
+      <figure class="epigraph">
+        <blockquote>“{resume.epigraph.quote}”</blockquote>
+        <figcaption>— {resume.epigraph.attribution}</figcaption>
+      </figure>
+    )}
+
+    <p class="resume-foot">
+      <a href="/">See the work</a>
+      <span aria-hidden="true">·</span>
+      <a href="/contact">Get in touch</a>
+    </p>
+  </div>
+</Base>
+
+<style>
+  .resume {
+    padding-block: var(--s-7) var(--s-9);
+    max-width: 68rem;
+  }
+
+  /* ---------- Head ---------- */
+  .resume-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: var(--s-5);
+    padding-bottom: var(--s-6);
+    border-bottom: 1px solid var(--c-line);
+  }
+
+  .resume-name {
+    font-size: var(--t-2xl);
+    font-weight: 400;
+    letter-spacing: -0.015em;
+  }
+
+  .resume-title {
+    color: var(--c-text-muted);
+    font-size: var(--t-lg);
+  }
+
+  .resume-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--s-3);
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--s-2);
+    padding: var(--s-3) var(--s-4);
+    border: 1px solid var(--c-line-strong);
+    border-radius: var(--radius);
+    font-size: var(--t-sm);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-wide);
+    transition: background var(--dur-fast) var(--ease), color var(--dur-fast) var(--ease),
+                border-color var(--dur-fast) var(--ease);
+  }
+
+  .btn:hover {
+    background: var(--c-text);
+    color: var(--c-bg);
+    border-color: var(--c-text);
+  }
+
+  .resume-contact {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--s-2);
+    font-size: var(--t-sm);
+    color: var(--c-text-muted);
+  }
+
+  .resume-contact a { border-bottom: 1px solid var(--c-line-strong); }
+  .resume-contact a:hover { color: var(--c-text); }
+
+  /* ---------- Sections ---------- */
+  .section { margin-top: var(--s-8); }
+
+  .section-h {
+    padding-bottom: var(--s-3);
+    margin-bottom: var(--s-5);
+    border-bottom: 1px solid var(--c-line);
+  }
+
+  /* ---------- Credits ---------- */
+  .credits {
+    list-style: none;
+    padding: 0;
+    display: grid;
+    gap: var(--s-1);
+  }
+
+  .credit {
+    display: grid;
+    gap: var(--s-1) var(--s-5);
+    padding: var(--s-3) 0;
+    border-bottom: 1px solid color-mix(in srgb, var(--c-line) 55%, transparent);
+  }
+
+  @media (min-width: 46rem) {
+    .credit {
+      grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr) minmax(0, 0.7fr);
+      align-items: baseline;
+    }
+  }
+
+  .credit-project {
+    color: var(--c-text);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: var(--s-2);
+  }
+
+  /* The Oscar notes. Stated once, quietly — no badge, no emphasis colour. */
+  .credit-note {
+    font-size: var(--t-xs);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-wide);
+    color: var(--c-text-faint);
+    border: 1px solid var(--c-line);
+    border-radius: var(--radius);
+    padding: 1px var(--s-2);
+  }
+
+  .credit-type,
+  .credit-role {
+    font-size: var(--t-sm);
+    color: var(--c-text-muted);
+  }
+
+  .credit-role { font-variant-numeric: tabular-nums; }
+
+  /* ---------- Experience ---------- */
+  .roles { display: grid; gap: var(--s-7); }
+
+  .role-head { margin-bottom: var(--s-3); }
+
+  .role-title { font-size: var(--t-lg); font-weight: 500; }
+
+  .role-company { color: var(--c-text-muted); }
+
+  .role-dates {
+    font-size: var(--t-sm);
+    color: var(--c-text-faint);
+    font-variant-numeric: tabular-nums;
+    margin-top: var(--s-1);
+  }
+
+  .role-bullets {
+    margin: 0;
+    padding-left: var(--s-5);
+    display: grid;
+    gap: var(--s-2);
+    color: var(--c-text-muted);
+    max-width: 54rem;
+  }
+
+  .role-bullets li::marker { color: var(--c-text-faint); }
+
+  /* ---------- Education + Skills ---------- */
+  .section-split { display: grid; gap: 0; }
+
+  @media (min-width: 52rem) {
+    .section-split {
+      grid-template-columns: minmax(0, 0.6fr) minmax(0, 1fr);
+      gap: var(--s-8);
+      align-items: start;
+    }
+  }
+
+  .edu { color: var(--c-text-muted); }
+  .edu strong { color: var(--c-text); font-weight: 500; }
+
+  .skills { display: grid; gap: var(--s-4); margin: 0; }
+
+  .skill dt {
+    font-size: var(--t-sm);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-wide);
+    color: var(--c-text);
+  }
+
+  .skill dd {
+    margin: var(--s-1) 0 0;
+    color: var(--c-text-muted);
+  }
+
+  /* ---------- Epigraph ---------- */
+  .epigraph {
+    margin: var(--s-9) 0 0;
+    padding-top: var(--s-6);
+    border-top: 1px solid var(--c-line);
+    text-align: center;
+  }
+
+  .epigraph blockquote {
+    font-size: var(--t-xl);
+    font-style: italic;
+    color: var(--c-text);
+    max-width: 34rem;
+    margin-inline: auto;
+    text-wrap: balance;
+  }
+
+  .epigraph figcaption {
+    margin-top: var(--s-3);
+    font-size: var(--t-sm);
+    color: var(--c-text-faint);
+  }
+
+  /* ---------- Foot ---------- */
+  .resume-foot {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--s-3);
+    margin-top: var(--s-8);
+    font-size: var(--t-sm);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-wide);
+    color: var(--c-text-faint);
+  }
+
+  .resume-foot a {
+    color: var(--c-text-muted);
+    border-bottom: 1px solid var(--c-line-strong);
+  }
+
+  .resume-foot a:hover { color: var(--c-text); border-color: var(--c-text); }
+</style>

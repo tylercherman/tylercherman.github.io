@@ -1,0 +1,155 @@
+---
+/**
+ * About page.
+ *
+ * Copy is revision 3 from _source-material/about-draft.md — Tyler approved it.
+ * Kept short and direct, with enough substance to be indexable (PLAN.md §10.3):
+ * an About page is the main text surface on an otherwise silent video site.
+ *
+ * Note the capitalization treatment lives in CSS, not in the strings. The old
+ * Squarespace page had mixed caps baked into the text, which made it awkward to
+ * edit and caused screen readers to announce it as shouting.
+ */
+import { Image } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import portrait from '../assets/tyler-cherman-portrait.jpg';
+import site from '../data/site.json';
+
+const description =
+  'Tyler Cherman is an editor and filmmaker based in Portland, Oregon, cutting ' +
+  'trailers, commercials, TV series and documentary for clients including HBO Max, ' +
+  'Netflix, Nike, Adidas, Amazon Studios, Showtime and A&E.';
+---
+
+<Base title="About" description={description} wide>
+  <div class="about wrap">
+    <div class="about-grid">
+      <div class="about-copy">
+        <h1 class="lede">
+          I'm an editor, a filmmaker, and a collaborator.
+        </h1>
+
+        <div class="prose">
+          <p>
+            I cut trailers, commercials, TV series, films, and documentaries — if it has
+            moving pictures, I put it together. I've worked with clients like HBO Max,
+            Netflix, Nike, Adidas, Amazon Studios, Showtime, and A&amp;E, among others.
+            Recently that included the trailer for an Oscar-nominated short film. Over
+            more than a decade, by a conservative count, several hundred sizzles.
+          </p>
+
+          <p>
+            The commercial side runs from sportswear and consumer campaigns to cutdowns
+            and social edits built to work vertically or at fifteen seconds. The narrative
+            side runs from trailers and pilots through series and hour-long documentary.
+          </p>
+
+          <p>
+            I work independently, start to finish: story, structure, pacing, sound, color.
+            Premiere and Resolve, mostly. Avid when asked nicely.
+          </p>
+
+          <p class="closer">Based in Portland. Working everywhere.</p>
+        </div>
+
+        <p class="about-links">
+          <a href="/resume">Resume</a>
+          <span aria-hidden="true">·</span>
+          <a href="/contact">Get in touch</a>
+        </p>
+      </div>
+
+      <figure class="about-figure">
+        <Image
+          src={portrait}
+          alt={`${site.name}, editor, seated on a vintage CRT monitor showing the same shot with burned-in timecode.`}
+          widths={[420, 700, 1100, 1796]}
+          sizes="(max-width: 60rem) 100vw, 40vw"
+          loading="eager"
+          fetchpriority="high"
+          class="about-photo"
+        />
+      </figure>
+    </div>
+  </div>
+</Base>
+
+<style>
+  .about { padding-block: var(--s-7) var(--s-9); }
+
+  .about-grid {
+    display: grid;
+    gap: var(--s-7);
+    align-items: start;
+  }
+
+  @media (min-width: 60rem) {
+    .about-grid {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 0.72fr);
+      gap: var(--s-9);
+    }
+  }
+
+  .about-copy {
+    max-width: 40rem;
+  }
+
+  .lede {
+    font-size: var(--t-2xl);
+    font-weight: 400;
+    letter-spacing: -0.015em;
+    margin-bottom: var(--s-6);
+    text-wrap: balance;
+  }
+
+  .prose p {
+    font-size: var(--t-lg);
+    color: var(--c-text-muted);
+    margin-bottom: var(--s-5);
+    max-width: 38rem;
+  }
+
+  /* The closing line is the one bit of the copy that should land like a statement. */
+  .prose .closer {
+    color: var(--c-text);
+    margin-bottom: 0;
+  }
+
+  .about-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--s-3);
+    align-items: baseline;
+    margin-top: var(--s-6);
+    font-size: var(--t-sm);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-wide);
+    color: var(--c-text-faint);
+  }
+
+  .about-links a {
+    color: var(--c-text-muted);
+    border-bottom: 1px solid var(--c-line-strong);
+    padding-bottom: 1px;
+    transition: color var(--dur-fast) var(--ease), border-color var(--dur-fast) var(--ease);
+  }
+
+  .about-links a:hover {
+    color: var(--c-text);
+    border-color: var(--c-text);
+  }
+
+  .about-figure { margin: 0; }
+
+  .about-photo {
+    width: 100%;
+    height: auto;
+    border-radius: var(--radius);
+  }
+
+  @media (min-width: 60rem) {
+    /* Nudge the portrait down so it optically aligns with the body copy rather
+       than the headline. */
+    .about-figure { margin-top: var(--s-2); }
+  }
+</style>

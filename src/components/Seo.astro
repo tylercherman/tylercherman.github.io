@@ -1,0 +1,112 @@
+---
+/**
+ * All head metadata in one place — titles, description, canonical, social cards,
+ * and JSON-LD structured data.
+ *
+ * The structured data is what connects "Tyler Cherman" + "editor" + "Portland"
+ * into a single entity Google can reason about. That's the mechanism behind the
+ * "Portland film editor" goal in PLAN.md §10, more than any keyword placement.
+ */
+import site from '../data/site.json';
+
+interface Props {
+  title: string;
+  description?: string;
+  /** Page-specific social image path under /public. Falls back to the site default. */
+  ogImage?: string;
+  /** Set true on pages that shouldn't carry the Person/Service schema. */
+  noSchema?: boolean;
+}
+
+const { title, description, ogImage, noSchema = false } = Astro.props;
+
+const desc = description ?? site.description;
+const canonical = new URL(Astro.url.pathname, Astro.site).href;
+const socialImage = new URL(ogImage ?? '/og-default.jpg', Astro.site).href;
+
+// Home gets the bare name; inner pages get "Page — Name" so tabs and search
+// results stay legible.
+const isHome = Astro.url.pathname === '/' || Astro.url.pathname === '/index.html';
+const fullTitle = isHome
+  ? `${site.name} — Film & Video Editor | ${site.location.city}, ${site.location.region}`
+  : `${title} — ${site.name}`;
+
+const schema = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'Person',
+      '@id': `${Astro.site}#person`,
+      name: site.name,
+      jobTitle: 'Film and Video Editor',
+      description: site.description,
+      url: Astro.site?.href,
+      email: `mailto:${site.email}`,
+      address: {
+        '@type': 'PostalAddress',
+        addressLocality: site.location.city,
+        addressRegion: site.location.region,
+        addressCountry: site.location.country,
+      },
+      knowsAbout: site.knowsAbout,
+      sameAs: site.sameAs,
+      alumniOf: { '@type': 'CollegeOrUniversity', name: 'Chapman University' },
+    },
+    {
+      '@type': 'ProfessionalService',
+      '@id': `${Astro.site}#service`,
+      name: `${site.name} — Film & Video Editing`,
+      description: site.description,
+      url: Astro.site?.href,
+      email: `mailto:${site.email}`,
+      telephone: site.phone,
+      provider: { '@id': `${Astro.site}#person` },
+      areaServed: [
+        { '@type': 'City', name: 'Portland' },
+        { '@type': 'Country', name: 'United States' },
+      ],
+      address: {
+        '@type': 'PostalAddress',
+        addressLocality: site.location.city,
+        addressRegion: site.location.region,
+        addressCountry: site.location.country,
+      },
+      serviceType: ['Video editing', 'Trailer editing', 'Commercial editing', 'Documentary editing'],
+    },
+    {
+      '@type': 'WebSite',
+      '@id': `${Astro.site}#website`,
+      url: Astro.site?.href,
+      name: site.name,
+      description: site.description,
+      publisher: { '@id': `${Astro.site}#person` },
+    },
+  ],
+};
+---
+
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="generator" content={Astro.generator} />
+
+<title>{fullTitle}</title>
+<meta name="description" content={desc} />
+<link rel="canonical" href={canonical} />
+
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content={site.name} />
+<meta property="og:title" content={fullTitle} />
+<meta property="og:description" content={desc} />
+<meta property="og:url" content={canonical} />
+<meta property="og:image" content={socialImage} />
+
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content={fullTitle} />
+<meta name="twitter:description" content={desc} />
+<meta name="twitter:image" content={socialImage} />
+
+<meta name="theme-color" content="#0a0a0b" />
+<link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+<link rel="sitemap" href="/sitemap-index.xml" />
+
+{!noSchema && <script type="application/ld+json" set:html={JSON.stringify(schema)} />}
