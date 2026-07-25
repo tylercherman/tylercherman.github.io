@@ -32,3 +32,11 @@ _source-material/*.pdf
 
 # Local Claude Code permission grants — machine-specific, not project config
 .claude/settings.local.json
+
+# Installers and archives. These get downloaded into the project folder by accident
+# and are far over GitHub's 100 MB per-file limit — a single one blocks every push
+# until it's removed from the commit.
+*.dmg
+*.pkg
+*.zip
+*.tar.gz

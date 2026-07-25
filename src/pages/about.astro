@@ -2,31 +2,23 @@
 /**
  * About page.
  *
- * Copy is revision 3 from _source-material/about-draft.md — Tyler approved it.
- * Kept short and direct, with enough substance to be indexable (PLAN.md §10.3):
- * an About page is the main text surface on an otherwise silent video site.
+ * Everything a person would want to change lives in src/copy/about.md — the
+ * headline, the body prose, and the search-engine description. Nothing on this page
+ * needs editing to change the words.
  *
- * Note the capitalization treatment lives in CSS, not in the strings. The old
- * Squarespace page had mixed caps baked into the text, which made it awkward to
- * edit and caused screen readers to announce it as shouting.
+ * The About page is the main indexable text surface on an otherwise silent video
+ * site, which is why the description is kept alongside the copy rather than being
+ * hardcoded here where it drifts out of sync (it did).
  */
 import { Image } from 'astro:assets';
 import Base from '../layouts/Base.astro';
 import portrait from '../assets/tyler-cherman-portrait.jpg';
 import site from '../data/site.json';
 import copy from '../data/copy.json';
-
-/*
- * The prose lives in src/copy/about.md so it can be edited as plain markdown —
- * no tags, no quotes, no commas to get wrong. `Content` renders the body; the
- * headline comes from that file's frontmatter.
- */
 import { Content as AboutBody, frontmatter } from '../copy/about.md';
 
-const description =
-  'Tyler Cherman is an editor and filmmaker based in Portland, Oregon, cutting ' +
-  'trailers, commercials, TV series and documentary for clients including HBO Max, ' +
-  'Netflix, Nike, Adidas, Amazon Studios, Showtime and A&E.';
+/** Falls back to the sitewide description if the markdown omits one. */
+const description = frontmatter.description ?? site.description;
 ---
 
 <Base title="About" description={description} wide>
