@@ -14,6 +14,7 @@
 import Base from '../layouts/Base.astro';
 import resume from '../data/resume.json';
 import site from '../data/site.json';
+import copy from '../data/copy.json';
 
 const description =
   `Resume and selected credits for ${resume.name}, ${resume.title.replace(/\.$/, '')} ` +
@@ -35,7 +36,7 @@ const credited = (c: (typeof resume.credits)[number]) =>
 
       <div class="resume-actions">
         <a class="btn" href={resume.pdf} download>
-          Download PDF
+          {copy.links.downloadPdf}
           <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true">
             <path d="M12 4v11m0 0l-4-4m4 4l4-4M5 19h14" />
           </svg>
@@ -112,9 +113,9 @@ const credited = (c: (typeof resume.credits)[number]) =>
     )}
 
     <p class="resume-foot">
-      <a href="/">See the work</a>
+      <a href="/">{copy.links.seeTheWork}</a>
       <span aria-hidden="true">·</span>
-      <a href="/contact">Get in touch</a>
+      <a href="/contact">{copy.links.getInTouch}</a>
     </p>
   </div>
 </Base>

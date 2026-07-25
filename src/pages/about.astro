@@ -14,6 +14,14 @@ import { Image } from 'astro:assets';
 import Base from '../layouts/Base.astro';
 import portrait from '../assets/tyler-cherman-portrait.jpg';
 import site from '../data/site.json';
+import copy from '../data/copy.json';
+
+/*
+ * The prose lives in src/copy/about.md so it can be edited as plain markdown —
+ * no tags, no quotes, no commas to get wrong. `Content` renders the body; the
+ * headline comes from that file's frontmatter.
+ */
+import { Content as AboutBody, frontmatter } from '../copy/about.md';
 
 const description =
   'Tyler Cherman is an editor and filmmaker based in Portland, Oregon, cutting ' +
@@ -25,37 +33,16 @@ const description =
   <div class="about wrap">
     <div class="about-grid">
       <div class="about-copy" data-reveal>
-        <h1 class="lede">
-          I'm an editor, a filmmaker, and a collaborator.
-        </h1>
+        <h1 class="lede">{frontmatter.headline}</h1>
 
         <div class="prose">
-          <p>
-            I cut trailers, commercials, TV series, films, and documentaries — if it has
-            moving pictures, I put it together. I've worked with clients like HBO Max,
-            Netflix, Nike, Adidas, Amazon Studios, Showtime, and A&amp;E, among others.
-            Recently that included the trailer for an Oscar-nominated short film. Over
-            more than a decade, by a conservative count, several hundred sizzles.
-          </p>
-
-          <p>
-            The commercial side runs from sportswear and consumer campaigns to cutdowns
-            and social edits built to work vertically or at fifteen seconds. The narrative
-            side runs from trailers and pilots through series and hour-long documentary.
-          </p>
-
-          <p>
-            I work independently, start to finish: story, structure, pacing, sound, color.
-            Premiere and Resolve, mostly. Avid when asked nicely.
-          </p>
-
-          <p class="closer">Based in Portland. Working everywhere.</p>
+          <AboutBody />
         </div>
 
         <p class="about-links">
-          <a href="/resume">Resume</a>
+          <a href="/resume">{copy.links.resume}</a>
           <span aria-hidden="true">·</span>
-          <a href="/contact">Get in touch</a>
+          <a href="/contact">{copy.links.getInTouch}</a>
         </p>
       </div>
 
@@ -102,17 +89,27 @@ const description =
     text-wrap: balance;
   }
 
-  .prose p {
+  /*
+   * :global because these <p> elements are produced by the markdown file rather
+   * than written in this template, so Astro's scoped-style compiler can't tag them.
+   */
+  .prose :global(p) {
     font-size: var(--t-lg);
     color: var(--c-text-muted);
     margin-bottom: var(--s-5);
     max-width: 38rem;
   }
 
-  /* The closing line is the one bit of the copy that should land like a statement. */
-  .prose .closer {
+  .prose :global(p:last-child) { margin-bottom: 0; }
+
+  /*
+   * The closing line is bolded in the markdown (**like this**). Styling <strong>
+   * here means the writer never has to know about CSS classes — bold the last line
+   * and it lands as a statement.
+   */
+  .prose :global(strong) {
     color: var(--c-text);
-    margin-bottom: 0;
+    font-weight: 400;
   }
 
   .about-links {

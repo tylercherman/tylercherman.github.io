@@ -7,6 +7,7 @@
  * tylercherman.com. A wrong turn should still look like the site.
  */
 import Base from '../layouts/Base.astro';
+import copy from '../data/copy.json';
 ---
 
 <Base
@@ -15,13 +16,11 @@ import Base from '../layouts/Base.astro';
 >
   <div class="notfound wrap-prose">
     <p class="code label">404</p>
-    <h1 class="notfound-h">That page doesn't exist.</h1>
-    <p class="notfound-p">
-      The link may be out of date, or there's a typo in the address.
-    </p>
+    <h1 class="notfound-h">{copy.notFound.heading}</h1>
+    <p class="notfound-p">{copy.notFound.body}</p>
 
     <p class="notfound-links">
-      <a href="/">See the work</a>
+      <a href="/">{copy.links.seeTheWork}</a>
       <span aria-hidden="true">·</span>
       <a href="/about">About</a>
       <span aria-hidden="true">·</span>
