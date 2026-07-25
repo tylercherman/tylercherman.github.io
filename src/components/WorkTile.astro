@@ -28,12 +28,8 @@ const d = entry.data;
 /** True ratio, for the lightbox — not for the thumbnail. */
 const ar = (d.width / d.height).toFixed(6);
 
-const minutes = d.duration ? Math.floor(d.duration / 60) : null;
-const seconds = d.duration ? d.duration % 60 : null;
-const runtime =
-  minutes !== null && seconds !== null
-    ? `${minutes}:${String(seconds).padStart(2, '0')}`
-    : null;
+// Runtime is no longer displayed. The `duration` field stays in the schema and in
+// the markdown — it costs nothing and is there if it's ever wanted back.
 ---
 
 <button
@@ -66,13 +62,20 @@ const runtime =
 
     <span class="tile-info">
       <span class="tile-title">{d.title}</span>
-      {runtime && <span class="tile-runtime">{runtime}</span>}
+      {/*
+        Client rather than runtime. Seven of the seventeen pieces have no client
+        value — the indie films — so those tiles show the title alone. That's an
+        absence, not the kind-mismatch the earlier version had (where brand work
+        said "ADIDAS" and films said "TRAILER"); adding a `client` line to those
+        markdown files is all it takes to fill them in.
+      */}
+      {d.client && <span class="tile-client">{d.client}</span>}
     </span>
   </span>
 
   {/* The full label, always available to screen readers regardless of hover. */}
   <span class="visually-hidden">
-    Play {d.client ? `${d.client} — ` : ''}{d.title}{runtime ? `, ${runtime}` : ''}
+    Play {d.client ? `${d.client} — ` : ''}{d.title}
   </span>
 </button>
 
@@ -178,12 +181,13 @@ const runtime =
     line-height: var(--lh-snug);
   }
 
-  .tile-runtime {
+  .tile-client {
     flex: 0 0 auto;
-    font-family: var(--font-mono);
     font-size: var(--t-xs);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-wide);
     color: var(--c-text-muted);
-    font-variant-numeric: tabular-nums;
+    text-align: right;
   }
 
   /*
