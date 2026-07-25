@@ -417,7 +417,16 @@ Fix it and run `npm run build` again.
 
 ### I broke something and I don't know what
 
-Undo everything since your last publish:
+First, see what you've actually changed:
+
+```bash
+git status
+```
+
+Files under **"Changes not staged for commit"** are ones you've edited. Files under
+**"Untracked files"** are brand new.
+
+To throw away all your edits and go back to the last published version:
 
 ```bash
 git checkout -- .
@@ -425,6 +434,12 @@ git checkout -- .
 
 Your files return to exactly how they were when you last pushed. Anything you changed
 since is gone — which is the point.
+
+> **One thing this doesn't do:** it only restores files that have been published before.
+> A brand-new file you just created isn't affected, because git has no earlier version
+> to restore it to. If you added a file and want it gone, drag it to the Trash. This
+> matters least of all for the everyday case — editing existing text — which it handles
+> perfectly.
 
 ### The site looks wrong but the build passed
 
