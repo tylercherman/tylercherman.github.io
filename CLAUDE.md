@@ -97,6 +97,30 @@ the `vimeoHash` that unlisted videos need to play.
   JPEG first (and strip EXIF — one of Tyler's photos carried GPS coordinates).
 - Docs: https://docs.astro.build — routing, content collections, images, styling.
 
+## Saved versions
+
+Two states are preserved in git. Neither is dead — Tyler may come back to the second.
+
+| Ref | What it is |
+|---|---|
+| `v1-vertical-grid` (tag) | The grid homepage as first approved. |
+| `v2-nle-timeline` (tag) | The editing-suite experiment, working. |
+| `experiment/nle-timeline` (branch) | Same, but mutable — check this out to tinker. |
+
+**The NLE timeline experiment** put a viewer at the top of the screen and a horizontal
+timeline of clips below it, with clip widths proportional to runtime, clicking a clip
+to load it into the viewer. It lived at `/timeline`. Tyler reviewed it and chose to
+stay with the vertical grid, but asked that it be kept for later.
+
+```bash
+git checkout experiment/nle-timeline      # work on it
+git show v2-nle-timeline:src/pages/timeline.astro   # just read it
+```
+
+Restoring it needs both `src/pages/timeline.astro` and the `appShell` prop plus
+`body.is-app-shell` styles in `src/layouts/Base.astro`, which were removed from main
+along with the page. **Do not rebuild it from scratch** — take it from the branch.
+
 ## Working style
 
 - Build one page or component at a time and show Tyler before moving on.

@@ -15,22 +15,9 @@ interface Props {
   wide?: boolean;
   /** Let a full-bleed hero run underneath the header instead of below it. */
   transparentHeader?: boolean;
-  /**
-   * App-shell mode: exactly one viewport tall, no footer, no page scroll. For the
-   * timeline experiment, which behaves like a piece of software rather than a
-   * document.
-   */
-  appShell?: boolean;
 }
 
-const {
-  title,
-  description,
-  ogImage,
-  wide = false,
-  transparentHeader = false,
-  appShell = false,
-} = Astro.props;
+const { title, description, ogImage, wide = false, transparentHeader = false } = Astro.props;
 const path = Astro.url.pathname;
 
 const isCurrent = (href: string) => {
@@ -59,7 +46,7 @@ const isCurrent = (href: string) => {
     </script>
   </head>
 
-  <body class:list={{ 'is-app-shell': appShell }}>
+  <body>
     <a class="skip-link" href="#main">Skip to content</a>
 
     <header class:list={['site-header', { 'site-header--over': transparentHeader }]}>
@@ -90,12 +77,6 @@ const isCurrent = (href: string) => {
       <slot />
     </main>
 
-    {/*
-      Visibility is handled in CSS via body.is-app-shell, not with the `hidden`
-      attribute. `hidden` removes an element from the accessibility tree, and CSS
-      overriding it to `display: block` on mobile would show it visually while
-      assistive tech might still skip it.
-    */}
     <footer class="site-footer">
       <div class="wrap footer-inner">
         <p class="footer-name">{site.name}</p>
@@ -252,48 +233,6 @@ const isCurrent = (href: string) => {
 
   /* ---------- Main ---------- */
   main { flex: 1 0 auto; }
-
-  /*
-   * App-shell mode: the page is exactly one viewport tall and does not scroll
-   * vertically. The timeline experiment relies on this — with nowhere else for a
-   * wheel gesture to go, translating it into horizontal movement stops being
-   * scroll hijacking and becomes the only sensible reading of the gesture.
-   */
-  body.is-app-shell {
-    height: 100dvh;
-    overflow: hidden;
-  }
-
-  body.is-app-shell main {
-    flex: 1 1 auto;
-    min-height: 0;
-    display: flex;
-    flex-direction: column;
-  }
-
-  body.is-app-shell .site-footer { display: none; }
-
-  /*
-   * A locked two-pane software layout does not survive a phone: the viewer ends up
-   * floating in dead space and the timeline gets squeezed off the bottom. Below
-   * 48rem the app shell is released and the page scrolls normally, with the panes
-   * simply stacked. Touch already scrolls the timeline horizontally by swipe, so
-   * nothing is lost.
-   */
-  @media (max-width: 48rem) {
-    body.is-app-shell {
-      height: auto;
-      min-height: 100dvh;
-      overflow: visible;
-    }
-
-    body.is-app-shell main { display: block; }
-
-    /* With the shell released the page has ordinary flow, so the footer belongs
-       back — it fills what would otherwise be dead space and puts the contact
-       details within reach on a phone. */
-    body.is-app-shell .site-footer { display: block; }
-  }
 
   .main-prose {
     padding-block: var(--s-8) var(--s-9);
