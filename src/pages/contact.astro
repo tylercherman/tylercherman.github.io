@@ -23,7 +23,7 @@ const description =
 <Base title="Contact" description={description} wide>
   <div class="contact wrap">
     <div class="contact-grid">
-      <div class="contact-intro">
+      <div class="contact-intro" data-reveal>
         <h1 class="contact-h">Get in touch</h1>
         <p class="contact-lede">
           Tell me about the project. Format, length, timeline, and where it's going.
@@ -41,6 +41,8 @@ const description =
       </div>
 
       <form
+        data-reveal
+        style="--reveal-delay: 120ms;"
         class="form"
         id="contact-form"
         action={endpoint}

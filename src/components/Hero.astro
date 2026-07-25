@@ -68,7 +68,13 @@ const hasVideo = Boolean(hero.video);
   </div>
 
   <div class="hero-content">
-    <h1 class="hero-headline">{hero.headline}</h1>
+    {/*
+      The headline's fill is a radial gradient clipped to the letterforms, centred
+      on the pointer. Moving the cursor across the name brightens the letters it
+      passes over — the type reacts to you, and because it's a gradient rather than
+      a filter it stays perfectly legible at every position.
+    */}
+    <h1 class="hero-headline" id="hero-headline">{hero.headline}</h1>
 
     <p class="hero-roles">
       {hero.roles.map((role, i) => (
@@ -87,8 +93,6 @@ const hasVideo = Boolean(hero.video);
       <path d="M12 5v14m0 0l-6-6m6 6l6-6" />
     </svg>
   </a>
-
-  {hero.credit && <p class="hero-credit">{hero.credit}</p>}
 </section>
 
 <style>
@@ -146,6 +150,64 @@ const hasVideo = Boolean(hero.video);
     line-height: 0.9;
     text-transform: uppercase;
     text-wrap: balance;
+
+    /* Entrance: a slow settle of tracking and opacity on load. Subtle enough to
+       register as polish rather than as an animation. */
+    animation: hero-settle 1400ms cubic-bezier(0.16, 0.84, 0.32, 1) both;
+  }
+
+  /*
+   * Cursor-tracked fill.
+   *
+   * --mx/--my are set by the script in percentages of the headline box. The bright
+   * centre of the gradient follows the pointer; the rest of the letters sit at a
+   * slightly softer white. Defaults to 50%/50% so with no pointer — touch devices,
+   * no JS — the name reads as an evenly lit solid.
+   *
+   * The @supports test deliberately checks the GRADIENT as well as background-clip.
+   * `color: transparent` is only safe while a background actually paints the
+   * letters; if the gradient were dropped for any reason and this rule still
+   * applied, the name would be invisible. That happened during development: an
+   * earlier version used `circle 34%`, and a circle's radius cannot be a
+   * percentage, so the whole declaration was discarded and the headline vanished.
+   * An ellipse accepts percentage radii — hence this form.
+   */
+  @supports (background-clip: text) and
+            (background-image: radial-gradient(ellipse 30% 180% at 50% 50%, #fff, #aaa)) {
+    .hero-headline {
+      --mx: 50%;
+      --my: 50%;
+      background-image: radial-gradient(
+        ellipse 30% 190% at var(--mx) var(--my),
+        /* The floor is deliberately high: the unlit letters must still read as
+           confident white, not as dimmed. The highlight is an accent on top of a
+           solid name, not the difference between legible and not. */
+        #ffffff 0%,
+        #f6f6f4 24%,
+        color-mix(in srgb, var(--c-text) 90%, transparent) 60%,
+        color-mix(in srgb, var(--c-text) 84%, transparent) 100%
+      );
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+  }
+
+  @keyframes hero-settle {
+    from {
+      opacity: 0;
+      letter-spacing: 0.02em;
+      translate: 0 10px;
+    }
+    to {
+      opacity: 1;
+      letter-spacing: var(--tracking-display);
+      translate: 0 0;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hero-headline { animation: none; }
   }
 
   .hero-roles {
@@ -190,21 +252,6 @@ const hasVideo = Boolean(hero.video);
     translate: -50% 4px;
   }
 
-  .hero-credit {
-    position: absolute;
-    z-index: 1;
-    right: var(--gutter);
-    bottom: var(--s-5);
-    font-size: var(--t-xs);
-    text-transform: uppercase;
-    letter-spacing: var(--tracking-wider);
-    color: var(--c-text-faint);
-  }
-
-  @media (max-width: 46rem) {
-    .hero-credit { display: none; }
-  }
-
   /*
    * Suppress the video where autoplaying it would be rude or unwanted:
    * a reduced-motion preference, or a phone on a cellular connection.
@@ -227,6 +274,64 @@ const hasVideo = Boolean(hero.video);
     });
     document.querySelectorAll<HTMLElement>('.hero-fallback').forEach((el) => {
       el.style.display = 'block';
+    });
+  }
+
+  /*
+   * Point the headline's gradient at the cursor.
+   *
+   * Tracked across the whole hero rather than just the text, so the highlight is
+   * already in the right place when the pointer arrives at the name instead of
+   * snapping to it.
+   *
+   * Coordinates are written in a rAF callback: pointermove can fire many times per
+   * frame, and setting a custom property each time would do redundant style work.
+   * `(pointer: fine)` skips all of this on touch, where there is no cursor to
+   * follow and the static centred gradient is what shows.
+   */
+  const heroEl = document.querySelector<HTMLElement>('.hero');
+  const headline = document.getElementById('hero-headline');
+
+  if (
+    heroEl &&
+    headline &&
+    matchMedia('(pointer: fine)').matches &&
+    !matchMedia('(prefers-reduced-motion: reduce)').matches
+  ) {
+    let pending = false;
+    let px = 0;
+    let py = 0;
+
+    const paint = () => {
+      pending = false;
+      const r = headline.getBoundingClientRect();
+      if (!r.width || !r.height) return;
+      // Express the pointer as a percentage of the headline's own box, which is
+      // what the radial-gradient position expects.
+      const x = ((px - r.left) / r.width) * 100;
+      const y = ((py - r.top) / r.height) * 100;
+      headline.style.setProperty('--mx', `${x.toFixed(2)}%`);
+      headline.style.setProperty('--my', `${y.toFixed(2)}%`);
+    };
+
+    heroEl.addEventListener(
+      'pointermove',
+      (event) => {
+        px = event.clientX;
+        py = event.clientY;
+        if (!pending) {
+          pending = true;
+          requestAnimationFrame(paint);
+        }
+      },
+      { passive: true }
+    );
+
+    // Return to an even fill when the pointer leaves, so the name doesn't keep a
+    // stale hotspot from wherever the cursor exited.
+    heroEl.addEventListener('pointerleave', () => {
+      headline.style.setProperty('--mx', '50%');
+      headline.style.setProperty('--my', '50%');
     });
   }
 </script>

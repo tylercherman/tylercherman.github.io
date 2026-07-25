@@ -27,7 +27,7 @@ const credited = (c: (typeof resume.credits)[number]) =>
 
 <Base title="Resume" description={description} wide>
   <div class="resume wrap">
-    <header class="resume-head">
+    <header class="resume-head" data-reveal>
       <div>
         <h1 class="resume-name">{resume.name}</h1>
         <p class="resume-title">{resume.title}</p>
@@ -48,7 +48,7 @@ const credited = (c: (typeof resume.credits)[number]) =>
       </div>
     </header>
 
-    <section class="section" aria-labelledby="credits-h">
+    <section class="section" data-reveal style="--reveal-delay: 60ms;" aria-labelledby="credits-h">
       <h2 class="section-h label" id="credits-h">Selected Credits</h2>
       <ul class="credits">
         {resume.credits.map((c) => (
@@ -64,7 +64,7 @@ const credited = (c: (typeof resume.credits)[number]) =>
       </ul>
     </section>
 
-    <section class="section" aria-labelledby="experience-h">
+    <section class="section" data-reveal style="--reveal-delay: 120ms;" aria-labelledby="experience-h">
       <h2 class="section-h label" id="experience-h">Experience</h2>
       <div class="roles">
         {resume.experience.map((job) => (
@@ -83,7 +83,7 @@ const credited = (c: (typeof resume.credits)[number]) =>
     </section>
 
     <div class="section-split">
-      <section class="section" aria-labelledby="education-h">
+      <section class="section" data-reveal style="--reveal-delay: 180ms;" aria-labelledby="education-h">
         <h2 class="section-h label" id="education-h">Education</h2>
         <p class="edu">
           <strong>{resume.education.school}</strong><br />
@@ -91,7 +91,7 @@ const credited = (c: (typeof resume.credits)[number]) =>
         </p>
       </section>
 
-      <section class="section" aria-labelledby="skills-h">
+      <section class="section" data-reveal style="--reveal-delay: 240ms;" aria-labelledby="skills-h">
         <h2 class="section-h label" id="skills-h">Skills</h2>
         <dl class="skills">
           {Object.entries(resume.skills).map(([name, detail]) => (

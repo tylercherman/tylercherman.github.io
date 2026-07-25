@@ -207,3 +207,39 @@ p { text-wrap: pretty; }
   letter-spacing: var(--tracking-wider);
   color: var(--c-text-muted);
 }
+
+/* ---------- Scroll reveal ----------
+ *
+ * Add `data-reveal` to any element; a shared IntersectionObserver in Base.astro
+ * adds `data-revealed` when it scrolls into view. Opacity and transform only —
+ * never height or margin — so this cannot cause layout shift.
+ *
+ * The default state is VISIBLE. The observer script adds `js-reveal` to <html>
+ * before paint, which is what arms the hidden state. Without JS, or if the script
+ * fails, everything simply shows — content is never trapped behind an animation.
+ */
+.js-reveal [data-reveal] {
+  opacity: 0;
+  translate: 0 14px;
+}
+
+[data-reveal] {
+  transition:
+    opacity 620ms cubic-bezier(0.22, 0.61, 0.36, 1),
+    translate 620ms cubic-bezier(0.22, 0.61, 0.36, 1);
+  transition-delay: var(--reveal-delay, 0ms);
+}
+
+.js-reveal [data-reveal][data-revealed] {
+  opacity: 1;
+  translate: 0 0;
+}
+
+/* Motion is decoration here; the content is the point. */
+@media (prefers-reduced-motion: reduce) {
+  .js-reveal [data-reveal] {
+    opacity: 1;
+    translate: 0 0;
+    transition: none;
+  }
+}

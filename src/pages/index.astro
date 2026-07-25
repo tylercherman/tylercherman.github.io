@@ -26,19 +26,26 @@ const work = (await getCollection('work', ({ data }) => !data.draft)).sort(
 
   <section class="work-section" id="work" aria-labelledby="work-h">
     <div class="wrap">
-      <div class="section-head">
+      <div class="section-head" data-reveal>
         <div>
           <h2 class="section-title" id="work-h">{site.work.heading}</h2>
           {/* Moved down from the hero — the formats mean more next to the work
               than they do over the video. */}
           <p class="section-subhead">{site.work.subhead}</p>
         </div>
-        <p class="section-count">{work.length} pieces</p>
       </div>
 
       <ul class="grid">
         {work.map((entry, i) => (
-          <li>
+          <li
+            data-reveal
+            /*
+             * Stagger by position within the row, not by absolute index — an
+             * index-based delay would make the seventeenth tile wait over a
+             * second, which reads as the page being slow rather than as polish.
+             */
+            style={`--reveal-delay: ${(i % 3) * 90}ms;`}
+          >
             <WorkTile entry={entry} priority={i < 3} />
           </li>
         ))}
@@ -53,10 +60,6 @@ const work = (await getCollection('work', ({ data }) => !data.draft)).sort(
   .work-section { padding-block: var(--s-8) var(--s-9); }
 
   .section-head {
-    display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-    gap: var(--s-4);
     margin-bottom: var(--s-6);
   }
 
@@ -70,13 +73,6 @@ const work = (await getCollection('work', ({ data }) => !data.draft)).sort(
     margin-top: var(--s-2);
     font-size: var(--t-sm);
     color: var(--c-text-muted);
-  }
-
-  .section-count {
-    font-size: var(--t-xs);
-    text-transform: uppercase;
-    letter-spacing: var(--tracking-wider);
-    color: var(--c-text-faint);
   }
 
   .grid {

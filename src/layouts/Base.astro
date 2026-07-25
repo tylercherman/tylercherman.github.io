@@ -30,6 +30,20 @@ const isCurrent = (href: string) => {
 <html lang="en">
   <head>
     <Seo title={title} description={description} ogImage={ogImage} />
+
+    {/*
+      Arm the reveal animations before first paint. This must be inline and in
+      <head>, not a module script: a deferred script would run after paint, so
+      elements would render visible and then jump to hidden — a flash of content.
+
+      Reveal elements default to visible in CSS and only hide once this class is
+      present, so if JS is disabled or this fails, the page is fully readable.
+    */}
+    <script is:inline>
+      if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        document.documentElement.classList.add('js-reveal');
+      }
+    </script>
   </head>
 
   <body>
@@ -110,6 +124,35 @@ const isCurrent = (href: string) => {
       { rootMargin: '-70px 0px 0px 0px', threshold: 0 }
     );
     observer.observe(hero);
+  }
+
+  /*
+   * Scroll reveals. One observer for every [data-reveal] element, unobserving
+   * each after it fires — these are one-shot entrances, not something that should
+   * re-trigger and re-animate every time you scroll back up.
+   *
+   * rootMargin pulls the trigger line up from the bottom edge so elements are
+   * already settled by the time they're properly in view, rather than animating
+   * under the reader's eye.
+   */
+  const revealTargets = document.querySelectorAll<HTMLElement>('[data-reveal]');
+
+  if (revealTargets.length && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    const revealObserver = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (!entry.isIntersecting) continue;
+          (entry.target as HTMLElement).dataset.revealed = '';
+          revealObserver.unobserve(entry.target);
+        }
+      },
+      { rootMargin: '0px 0px -12% 0px', threshold: 0.08 }
+    );
+
+    revealTargets.forEach((el) => revealObserver.observe(el));
+  } else {
+    // Reduced motion, or no targets: make sure nothing stays hidden.
+    revealTargets.forEach((el) => { el.dataset.revealed = ''; });
   }
 </script>
 

@@ -24,7 +24,7 @@ const description =
 <Base title="About" description={description} wide>
   <div class="about wrap">
     <div class="about-grid">
-      <div class="about-copy">
+      <div class="about-copy" data-reveal>
         <h1 class="lede">
           I'm an editor, a filmmaker, and a collaborator.
         </h1>
@@ -59,7 +59,7 @@ const description =
         </p>
       </div>
 
-      <figure class="about-figure">
+      <figure class="about-figure" data-reveal style="--reveal-delay: 120ms;">
         <Image
           src={portrait}
           alt={`${site.name}, editor, seated on a vintage CRT monitor showing the same shot with burned-in timecode.`}

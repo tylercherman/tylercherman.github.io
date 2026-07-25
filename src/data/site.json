@@ -15,7 +15,6 @@
   "hero": {
     "headline": "Tyler Cherman",
     "roles": ["Editor", "Creative"],
-    "credit": "The Last Ranger",
     "video": null,
     "_videoNote": "Set to \"/video/hero.mp4\" once the file is in public/video/. While null, the placeholder still is used. See public/video/README.md for export specs."
   },
