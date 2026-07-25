@@ -3,6 +3,55 @@
 Portfolio site for **Tyler Cherman, editor** (trailers, brand/commercial, edit reels).
 Read `PLAN.md` before any structural work. Migration and DNS details live in `SETUP-GUIDE.md`.
 
+---
+
+## WHERE THINGS STAND (updated 2026-07-24)
+
+**The site is built and Tyler is happy with it.** It is live for review at
+**https://tylercherman.github.io** — GitHub Pages, deploys on push to `main`.
+
+**It is NOT yet on tylercherman.com.** That domain still serves the old Squarespace
+site. Nothing about DNS has been touched. Squarespace is still paid for and still live.
+
+### Waiting on Tyler
+
+| Item | What's needed |
+|---|---|
+| **Hero video** | A 20–30s silent loop. Specs in `public/video/README.md`. Drop at `public/video/hero.mp4`, then set `hero.video` to `"/video/hero.mp4"` in `src/data/site.json`. Until then a placeholder still is used. |
+| **4 thumbnails** | The non-16:9 pieces crop badly. Use `npm run set-poster <slug> <image>`: `ryan-garcia`, `retail-billboard`, `honda-troye-sivan`, `honda-julia-michaels`. |
+| **6 client names** | The indie films have no `client:` value, so those tiles show title only: `the-last-ranger`, `shopping-for-superman`, `inside-these-walls`, `above-the-sea`, `two-funerals-freezer`, `good-for-somethings`. |
+| **3 display titles** | Still carry a `# TODO` comment — Vimeo's internal names. `npm run list-work` flags them. |
+| **Form confirmation** | Formspree delivers nothing until Tyler submits the live form once and clicks their confirmation email. **Not yet done.** |
+| **DNS cutover** | See below. |
+
+### The DNS cutover — read `SETUP-GUIDE.md` §7 before touching anything
+
+**The trap:** the domain is registered at **GoDaddy** but its nameservers point at
+**Squarespace** (`connect1/connect2.squarespacedns.com`). Editing DNS records in
+GoDaddy's panel will do nothing. Records must change at Squarespace, or the
+nameservers must move to GoDaddy first.
+
+Recommended order — and it matters, because getting it wrong takes a live client-facing
+portfolio offline:
+
+1. Move nameservers to GoDaddy (so cancelling Squarespace can't break DNS)
+2. Add GitHub's A/AAAA records + the `www` CNAME
+3. Verify the domain in GitHub, then set the custom domain
+4. Add `public/CNAME` containing the domain
+5. Confirm both apex and `www` serve over HTTPS
+6. **Only then** cancel Squarespace
+
+Claude cannot do steps 1–3 — they require logging into GoDaddy, Squarespace and
+GitHub's settings UI. Talk Tyler through them; don't attempt them.
+
+### Things deliberately not done
+
+- No credits banner on the homepage (Tyler declined — see §6.3 of PLAN.md)
+- No category filters, no individual project pages
+- The NLE timeline experiment is parked on `experiment/nle-timeline` (see below)
+
+---
+
 ## Stack
 
 Astro 7, static output. GitHub Pages via `.github/workflows/deploy.yml` on push to `main`.
