@@ -1,0 +1,31 @@
+{
+  "_readme": "Short pieces of page text. Edit the values on the right of each colon, keeping the quotes. Longer prose lives in src/copy/*.md instead.",
+
+  "contact": {
+    "heading": "Get in touch",
+    "lede": "Tell me about the project. Format, length, timeline, and where it's going.",
+    "directPrefix": "Or email me directly at",
+    "sendButton": "Send",
+    "successMessage": "Thanks — that's sent. I'll be in touch.",
+    "errorMessage": "Something went wrong sending that. Please email me directly.",
+    "offlineMessage": "Could not reach the form service. Please email me directly.",
+    "labels": {
+      "name": "Name",
+      "email": "Email",
+      "project": "Project",
+      "message": "Message"
+    }
+  },
+
+  "notFound": {
+    "heading": "That page doesn't exist.",
+    "body": "The link may be out of date, or there's a typo in the address."
+  },
+
+  "links": {
+    "resume": "Resume",
+    "getInTouch": "Get in touch",
+    "seeTheWork": "See the work",
+    "downloadPdf": "Download PDF"
+  }
+}
