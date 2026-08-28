@@ -111,6 +111,14 @@ const schema = {
 <meta property="og:description" content={desc} />
 <meta property="og:url" content={canonical} />
 <meta property="og:image" content={socialImage} />
+{/*
+  Several platforms (LinkedIn especially) render a small thumbnail instead of a large
+  card unless the dimensions are declared, because they won't download the image just
+  to measure it. These match public/og-default.jpg — update both if the card changes.
+*/}
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta property="og:image:alt" content={`${site.name} — ${site.role}, ${site.location.city}, ${site.location.region}`} />
 
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:title" content={fullTitle} />

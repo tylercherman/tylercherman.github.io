@@ -15,7 +15,8 @@
     "add-work": "node scripts/add-work.mjs",
     "list-work": "node scripts/list-work.mjs",
     "set-poster": "node scripts/set-poster.mjs",
-    "fix-posters": "node scripts/fix-posters.mjs"
+    "fix-posters": "node scripts/fix-posters.mjs",
+    "og-card": "node scripts/make-og-card.mjs"
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.7.3",
