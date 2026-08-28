@@ -15,6 +15,21 @@ import { detectBars, stripLetterbox } from './lib/letterbox.mjs';
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const DIR = join(ROOT, 'src/assets/posters');
 
+/*
+ * Posters whose frames are genuinely dark at the edges, not letterboxed.
+ *
+ * The detector works on row brightness, so a shot that simply ends in shadow looks
+ * identical to a black bar. honda-julia-michaels is a concert frame whose lower third
+ * is an unlit crowd — mean brightness around 5/255, but real picture. Cropping it
+ * would remove image and shift the composition.
+ *
+ * Verified by eye before adding here. Add to this list only after actually looking at
+ * the frame, never just because a crop "seems safe".
+ */
+const KEEP_AS_IS = new Set([
+  'honda-julia-michaels.jpg',
+]);
+
 const apply = process.argv.includes('--apply');
 const files = (await readdir(DIR)).filter((f) => f.endsWith('.jpg')).sort();
 
@@ -26,6 +41,15 @@ let changed = 0;
 
 for (const f of files) {
   const path = join(DIR, f);
+
+  if (KEEP_AS_IS.has(f)) {
+    console.log(
+      '  ' + f.replace('.jpg', '').padEnd(30) +
+      'skipped — dark frame, not letterboxed (see KEEP_AS_IS)'
+    );
+    continue;
+  }
+
   const before = await detectBars(path);
 
   if (!before.letterboxed) {
