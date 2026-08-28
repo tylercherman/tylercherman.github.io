@@ -40,3 +40,8 @@ _source-material/*.pdf
 *.pkg
 *.zip
 *.tar.gz
+
+# Source video masters. Multi-gigabyte exports live here for reference; nothing in
+# this folder ships. Web-ready video belongs in public/video/ (and must stay small —
+# every visitor downloads it). GitHub rejects any file over 100 MB.
+WEBSITE VIDEO/
