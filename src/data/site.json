@@ -14,19 +14,34 @@
   "formspreeId": "xykrbgok",
   "hero": {
     "headline": "Tyler Cherman",
-    "roles": ["Editor", "Creative"],
+    "roles": [
+      "Editor",
+      "Creative"
+    ],
     "video": "/video/hero.mp4",
-    "_videoNote": "Set to null to fall back to the placeholder still. The file is 9 MB at 1156 kbps, 64s, no audio track — every visitor downloads it, so keep any replacement in that range. Specs in public/video/README.md."
+    "_videoNote": "Set to null to fall back to the placeholder still. Currently 17 MB at 2161 kbps, 64s, no audio track. Only desktop visitors download it — the video is suppressed below 40rem and under Save-Data, where the still shows instead. Specs in public/video/README.md."
   },
   "work": {
     "heading": "Selected Work",
     "subhead": "Trailers, commercials, series, documentary."
   },
   "nav": [
-    { "label": "Work", "href": "/" },
-    { "label": "About", "href": "/about" },
-    { "label": "Resume", "href": "/resume" },
-    { "label": "Contact", "href": "/contact" }
+    {
+      "label": "Work",
+      "href": "/"
+    },
+    {
+      "label": "About",
+      "href": "/about"
+    },
+    {
+      "label": "Resume",
+      "href": "/resume"
+    },
+    {
+      "label": "Contact",
+      "href": "/contact"
+    }
   ],
   "social": [],
   "sameAs": [
