@@ -5,13 +5,33 @@ Read `PLAN.md` before any structural work. Migration and DNS details live in `SE
 
 ---
 
-## WHERE THINGS STAND (updated 2026-07-24)
+## WHERE THINGS STAND (updated 2026-08-28)
 
-**The site is built and Tyler is happy with it.** It is live for review at
-**https://tylercherman.github.io** — GitHub Pages, deploys on push to `main`.
+**THE SITE IS LIVE AT https://tylercherman.com.** The DNS cutover is complete.
 
-**It is NOT yet on tylercherman.com.** That domain still serves the old Squarespace
-site. Nothing about DNS has been touched. Squarespace is still paid for and still live.
+- Nameservers moved from Squarespace to GoDaddy (`ns57/ns58.domaincontrol.com`)
+- GitHub's four A and four AAAA records on the apex; `www` CNAME to `tylercherman.github.io`
+- Custom domain set to `tylercherman.com`; `www` 301-redirects to it
+- Let's Encrypt certificate issued and HTTPS enforced
+- Domain verified on the GitHub account (blocks takeover)
+- No MX records — there is no email on this domain
+- Squarespace **still active** as a rollback; cancel once Tyler is confident
+
+**Note: the CNAME file does NOT set the custom domain on Actions-based deploys.** That
+only works for legacy branch deploys. `public/CNAME` exists and is served, but the
+domain had to be set through the API:
+`gh api repos/tylercherman/tylercherman.github.io/pages -X PUT -f cname=tylercherman.com`
+(and `-F https_enforced=true` — note `-F` for the boolean, `-f` sends a string and 422s).
+
+### Known open issue
+
+`http://tylercherman.com` (explicit http, apex only) returns GitHub's "Site not found"
+instead of redirecting to HTTPS. Consistent across all four GitHub edge IPs, and not
+fixed by domain verification. **`https://` works everywhere and `www` redirects
+correctly over both protocols**, so real-world impact is limited to links that hardcode
+`http://`. If it persists, the remedy is removing and re-adding the custom domain to
+force reprovisioning — but that risks a working production site for a minor edge case,
+so don't do it casually.
 
 ### Waiting on Tyler
 
@@ -21,10 +41,10 @@ site. Nothing about DNS has been touched. Squarespace is still paid for and stil
 | **4 thumbnails** | The non-16:9 pieces crop badly. Use `npm run set-poster <slug> <image>`: `ryan-garcia`, `retail-billboard`, `honda-troye-sivan`, `honda-julia-michaels`. |
 | **6 client names** | The indie films have no `client:` value, so those tiles show title only: `the-last-ranger`, `shopping-for-superman`, `inside-these-walls`, `above-the-sea`, `two-funerals-freezer`, `good-for-somethings`. |
 | **3 display titles** | Still carry a `# TODO` comment — Vimeo's internal names. `npm run list-work` flags them. |
-| **Form confirmation** | Formspree delivers nothing until Tyler submits the live form once and clicks their confirmation email. **Not yet done.** |
-| **DNS cutover** | See below. |
+| **Form confirmation** | ✅ Done — confirmed, and a live test from tylercherman.com was received. |
+| **DNS cutover** | ✅ Done — live on tylercherman.com |
 
-### The DNS cutover — read `SETUP-GUIDE.md` §7 before touching anything
+### The DNS cutover — DONE 2026-08-28. Kept for reference; see CUTOVER.md
 
 **The trap:** the domain is registered at **GoDaddy** but its nameservers point at
 **Squarespace** (`connect1/connect2.squarespacedns.com`). Editing DNS records in
