@@ -253,10 +253,16 @@ const hasVideo = Boolean(hero.video);
   }
 
   /*
-   * Suppress the video where autoplaying it would be rude or unwanted:
-   * a reduced-motion preference, or a phone on a cellular connection.
+   * The video plays on phones too. It was previously suppressed below 40rem to avoid
+   * pushing megabytes over cellular, but Tyler cut the montage title-safe so it holds
+   * up in a vertical crop, and wants it seen there.
+   *
+   * Still suppressed for `prefers-reduced-motion` — that's an accessibility setting,
+   * not a bandwidth one, and some people get motion sickness from autoplaying video.
+   * Save-Data is still honoured in the script below, so a visitor who has explicitly
+   * asked their browser to conserve data gets the still instead.
    */
-  @media (prefers-reduced-motion: reduce), (max-width: 40rem) {
+  @media (prefers-reduced-motion: reduce) {
     .hero-video { display: none; }
     .hero-fallback { display: block; }
   }
