@@ -18,7 +18,13 @@
  */
 import { Image } from 'astro:assets';
 import site from '../data/site.json';
-import placeholder from '../assets/hero-placeholder.jpg';
+
+/*
+ * Shown wherever the video can't or shouldn't play: prefers-reduced-motion, and
+ * Save-Data. Also stands in for the whole hero if `hero.video` is ever set to null.
+ * The black-and-white portrait, at Tyler's request.
+ */
+import placeholder from '../assets/hero-fallback.jpg';
 
 const hero = site.hero;
 const hasVideo = Boolean(hero.video);
@@ -118,6 +124,17 @@ const hasVideo = Boolean(hero.video);
     height: 100%;
     object-fit: cover;
     object-position: center center;
+  }
+
+  /*
+   * The portrait is 0.74 and the hero is wide, so a centre crop keeps only ~42% of
+   * its height — a horizontal band. Anchoring at 30% puts that band on the face,
+   * brow to chin, with the cap brim still in frame. Chosen by rendering five anchor
+   * points and comparing, not by guessing.
+   */
+  .hero-still,
+  .hero-fallback {
+    object-position: center 30%;
   }
 
   .hero-fallback { display: none; }
