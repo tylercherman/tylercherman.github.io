@@ -195,20 +195,20 @@ const hasVideo = Boolean(hero.video);
       --mx: 50%;
       --my: 50%;
       background-image: radial-gradient(
-        ellipse 26% 175% at var(--mx) var(--my),
+        ellipse 30% 190% at var(--mx) var(--my),
         /*
-          The cursor darkens the letters to black rather than brightening them, so
-          the name reads as being wiped away under the pointer and restored behind it.
-          Everything outside the pointer stays solid white.
+          The floor is deliberately high: the unlit letters must still read as
+          confident white, not as dimmed. The highlight is an accent on top of a
+          solid name, not the difference between legible and not.
 
-          The middle stops matter more than the ends: without them the black would
-          land as a hard blob. Stepping through greys makes it a gradient falloff.
+          A version that darkened toward black was tried and reverted — against dark
+          frames of the montage the letters approached invisible, which read as
+          broken rather than as an effect.
         */
-        #000000 0%,
-        #14141a 18%,
-        #6d6d75 38%,
-        color-mix(in srgb, var(--c-text) 92%, transparent) 62%,
-        var(--c-text) 100%
+        #ffffff 0%,
+        #f6f6f4 24%,
+        color-mix(in srgb, var(--c-text) 90%, transparent) 60%,
+        color-mix(in srgb, var(--c-text) 84%, transparent) 100%
       );
       -webkit-background-clip: text;
       background-clip: text;

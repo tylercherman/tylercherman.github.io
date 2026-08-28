@@ -129,40 +129,71 @@ const credited = (c: (typeof resume.credits)[number]) =>
   }
 
   /* ---------- Head ----------
-     Photo and identity sit side by side, bottom-aligned so the portrait's base lines
-     up with the last line of text rather than floating. */
+     `align-items: stretch` makes the figure exactly as tall as the identity block, so
+     the photo's top edge meets the top of the name and its base meets the last line
+     of contact detail. The photo's width then derives from that height. */
   .resume-head {
     display: flex;
-    align-items: flex-end;
+    align-items: stretch;
     gap: clamp(var(--s-4), 2.5vw, var(--s-6));
     padding-bottom: var(--s-6);
     border-bottom: 1px solid var(--c-line);
   }
 
+  /*
+   * The TEXT sets the height and the photo follows it.
+   *
+   * That ordering has to be forced. With the image in normal flow its intrinsic
+   * height drives the flex line, so the photo ended up taller than the text it was
+   * meant to match. Positioning the image absolutely removes it from that
+   * calculation: the figure then stretches to whatever height the identity block
+   * needs, and `aspect-ratio` derives the width from it.
+   */
+  /*
+   * Width is set explicitly rather than derived from aspect-ratio. As a flex item
+   * with an absolutely-positioned child there is no content to size from, so
+   * `flex-basis: auto` resolves the width to zero and aspect-ratio never gets a
+   * chance. A fixed width with a stretched height is both simpler and more robust.
+   *
+   * ~93px is what the source's 0.75 ratio wants at this text height, so `cover`
+   * crops essentially nothing at desktop. If the name wraps on a narrow screen the
+   * block grows taller and cover trims the sides gracefully.
+   */
   .resume-figure {
     margin: 0;
     flex: 0 0 auto;
-    width: clamp(96px, 12vw, 150px);
+    position: relative;
+    align-self: stretch;
+    width: clamp(74px, 7vw, 96px);
+    border-radius: var(--radius);
+    overflow: hidden;
   }
 
   .resume-photo {
+    position: absolute;
+    inset: 0;
     width: 100%;
-    height: auto;
-    border-radius: var(--radius);
+    height: 100%;
+    max-width: none;
+    object-fit: cover;
     display: block;
   }
 
   .resume-identity { min-width: 0; }
 
+  /* Same display face as the hero name, so the two pages read as one system. */
   .resume-name {
-    font-size: var(--t-2xl);
-    font-weight: 400;
-    letter-spacing: -0.015em;
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 3.2vw + 1.1rem, 3.25rem);
+    font-weight: var(--weight-display);
+    letter-spacing: var(--tracking-display);
+    line-height: 1;
   }
 
   .resume-title {
     color: var(--c-text-muted);
     font-size: var(--t-lg);
+    margin-top: var(--s-2);
   }
 
   .resume-contact {
