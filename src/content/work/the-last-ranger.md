@@ -8,6 +8,7 @@ vimeoHash: "75a27e6025"
 width: 1920
 height: 1080
 duration: 74
+posterPosition: "center"
 poster: ../../assets/posters/the-last-ranger.jpg
 alt: "Still from the trailer for The Last Ranger, edited by Tyler Cherman."
 featured: true

@@ -7,6 +7,7 @@ vimeoHash: "bb53cfac01"
 width: 1920
 height: 1080
 duration: 60
+posterPosition: "center"
 poster: ../../assets/posters/above-the-sea.jpg
 alt: "Still from the trailer for Above the Sea, edited by Tyler Cherman."
 draft: false
