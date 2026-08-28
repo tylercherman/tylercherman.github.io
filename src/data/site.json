@@ -19,7 +19,7 @@
       "Creative"
     ],
     "video": "/video/hero.mp4",
-    "_videoNote": "Set to null to fall back to the placeholder still. Currently 17 MB at 2161 kbps, 64s, no audio track. Only desktop visitors download it — the video is suppressed below 40rem and under Save-Data, where the still shows instead. Specs in public/video/README.md."
+    "_videoNote": "Set to null to fall back to the placeholder still. Currently 21 MB at 2640 kbps, 66s, no audio track, faststart enabled. Every visitor downloads it — phones included, since Tyler cut it to hold up in a vertical crop. Specs in public/video/README.md."
   },
   "work": {
     "heading": "Selected Work",
