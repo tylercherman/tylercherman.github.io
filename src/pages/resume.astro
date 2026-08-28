@@ -14,10 +14,12 @@
  * Nike, Amazon Studios, Showtime and Oscar credits appear. It's also the densest
  * indexable text on the site, which matters for the local-search goal in §10.
  */
+import { Image } from 'astro:assets';
 import Base from '../layouts/Base.astro';
 import resume from '../data/resume.json';
 import site from '../data/site.json';
 import copy from '../data/copy.json';
+import analog from '../assets/analog.jpg';
 
 const description =
   `Resume and selected credits for ${resume.name}, ${resume.title.replace(/\.$/, '')} ` +
@@ -32,18 +34,26 @@ const credited = (c: (typeof resume.credits)[number]) =>
 <Base title="Resume" description={description} wide>
   <div class="resume wrap">
     <header class="resume-head" data-reveal>
-      <div>
+      {/*
+        The Analog portrait sits in the header rather than on the Contact page. It
+        fills the space the "Download PDF" button used to occupy, and unlike on
+        Contact it doesn't compete with a form for attention — so it can stay visible
+        on phones instead of being hidden at narrow widths.
+      */}
+      <figure class="resume-figure">
+        <Image
+          src={analog}
+          alt={`${site.name} seated on a vintage CRT monitor showing the same shot with burned-in timecode.`}
+          widths={[180, 300, 420]}
+          sizes="(max-width: 40rem) 96px, 150px"
+          loading="eager"
+          class="resume-photo"
+        />
+      </figure>
+
+      <div class="resume-identity">
         <h1 class="resume-name">{resume.name}</h1>
         <p class="resume-title">{resume.title}</p>
-      </div>
-
-      {/*
-        The "Download PDF" button is removed for now at Tyler's request. The PDF
-        itself still sits at public/tyler-cherman-resume.pdf and `resume.pdf` remains
-        in the JSON, so restoring the button is putting this markup back — nothing
-        has been thrown away.
-      */}
-      <div class="resume-actions">
         <p class="resume-contact">
           <span>{resume.location}</span>
           <span aria-hidden="true">·</span>
@@ -118,16 +128,31 @@ const credited = (c: (typeof resume.credits)[number]) =>
     max-width: 68rem;
   }
 
-  /* ---------- Head ---------- */
+  /* ---------- Head ----------
+     Photo and identity sit side by side, bottom-aligned so the portrait's base lines
+     up with the last line of text rather than floating. */
   .resume-head {
     display: flex;
-    flex-wrap: wrap;
     align-items: flex-end;
-    justify-content: space-between;
-    gap: var(--s-5);
+    gap: clamp(var(--s-4), 2.5vw, var(--s-6));
     padding-bottom: var(--s-6);
     border-bottom: 1px solid var(--c-line);
   }
+
+  .resume-figure {
+    margin: 0;
+    flex: 0 0 auto;
+    width: clamp(96px, 12vw, 150px);
+  }
+
+  .resume-photo {
+    width: 100%;
+    height: auto;
+    border-radius: var(--radius);
+    display: block;
+  }
+
+  .resume-identity { min-width: 0; }
 
   .resume-name {
     font-size: var(--t-2xl);
@@ -140,23 +165,28 @@ const credited = (c: (typeof resume.credits)[number]) =>
     font-size: var(--t-lg);
   }
 
-  .resume-actions {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: var(--s-3);
-  }
-
   .resume-contact {
     display: flex;
     flex-wrap: wrap;
     gap: var(--s-2);
+    margin-top: var(--s-3);
     font-size: var(--t-sm);
     color: var(--c-text-muted);
   }
 
   .resume-contact a { border-bottom: 1px solid var(--c-line-strong); }
   .resume-contact a:hover { color: var(--c-text); }
+
+  /* Narrow columns force the location and email onto separate lines, which leaves the
+     "·" dangling at the end of the first one. Stack them and drop the separator. */
+  @media (max-width: 34rem) {
+    .resume-contact {
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .resume-contact span[aria-hidden] { display: none; }
+  }
 
   /* ---------- Sections ---------- */
   .section { margin-top: var(--s-8); }
