@@ -3,8 +3,11 @@
  * Resume page.
  *
  * Driven entirely by src/data/resume.json — edit that file and this page follows.
- * The PDF in /public stays downloadable for producers who want to file or forward
- * it, per the "both HTML and PDF" decision.
+ *
+ * Currently renders Selected Credits, then Education and Skills. The Experience
+ * section and the "Download PDF" button were both removed at Tyler's request; the
+ * underlying data and the PDF file are still present, so either can come back
+ * without retyping anything.
  *
  * This page carries more weight than a resume page normally would: with no credits
  * banner on the homepage (PLAN.md §6.3), it is the ONLY place the HBO Max, Netflix,
@@ -34,13 +37,13 @@ const credited = (c: (typeof resume.credits)[number]) =>
         <p class="resume-title">{resume.title}</p>
       </div>
 
+      {/*
+        The "Download PDF" button is removed for now at Tyler's request. The PDF
+        itself still sits at public/tyler-cherman-resume.pdf and `resume.pdf` remains
+        in the JSON, so restoring the button is putting this markup back — nothing
+        has been thrown away.
+      */}
       <div class="resume-actions">
-        <a class="btn" href={resume.pdf} download>
-          {copy.links.downloadPdf}
-          <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true">
-            <path d="M12 4v11m0 0l-4-4m4 4l4-4M5 19h14" />
-          </svg>
-        </a>
         <p class="resume-contact">
           <span>{resume.location}</span>
           <span aria-hidden="true">·</span>
@@ -65,26 +68,15 @@ const credited = (c: (typeof resume.credits)[number]) =>
       </ul>
     </section>
 
-    <section class="section" data-reveal style="--reveal-delay: 120ms;" aria-labelledby="experience-h">
-      <h2 class="section-h label" id="experience-h">Experience</h2>
-      <div class="roles">
-        {resume.experience.map((job) => (
-          <article class="role">
-            <header class="role-head">
-              <h3 class="role-title">{job.role}</h3>
-              <p class="role-company">{job.company}</p>
-              <p class="role-dates">{job.start} – {job.end}</p>
-            </header>
-            <ul class="role-bullets">
-              {job.bullets.map((b) => <li>{b}</li>)}
-            </ul>
-          </article>
-        ))}
-      </div>
-    </section>
+    {/*
+      The Experience section is removed at Tyler's request — the page now runs
+      Selected Credits straight into Education and Skills. The four roles are still in
+      resume.json, so bringing it back is restoring this markup rather than retyping
+      anything.
+    */}
 
     <div class="section-split">
-      <section class="section" data-reveal style="--reveal-delay: 180ms;" aria-labelledby="education-h">
+      <section class="section" data-reveal style="--reveal-delay: 120ms;" aria-labelledby="education-h">
         <h2 class="section-h label" id="education-h">Education</h2>
         <p class="edu">
           <strong>{resume.education.school}</strong><br />
@@ -92,7 +84,7 @@ const credited = (c: (typeof resume.credits)[number]) =>
         </p>
       </section>
 
-      <section class="section" data-reveal style="--reveal-delay: 240ms;" aria-labelledby="skills-h">
+      <section class="section" data-reveal style="--reveal-delay: 180ms;" aria-labelledby="skills-h">
         <h2 class="section-h label" id="skills-h">Skills</h2>
         <dl class="skills">
           {Object.entries(resume.skills).map(([name, detail]) => (
@@ -153,26 +145,6 @@ const credited = (c: (typeof resume.credits)[number]) =>
     flex-direction: column;
     align-items: flex-start;
     gap: var(--s-3);
-  }
-
-  .btn {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--s-2);
-    padding: var(--s-3) var(--s-4);
-    border: 1px solid var(--c-line-strong);
-    border-radius: var(--radius);
-    font-size: var(--t-sm);
-    text-transform: uppercase;
-    letter-spacing: var(--tracking-wide);
-    transition: background var(--dur-fast) var(--ease), color var(--dur-fast) var(--ease),
-                border-color var(--dur-fast) var(--ease);
-  }
-
-  .btn:hover {
-    background: var(--c-text);
-    color: var(--c-bg);
-    border-color: var(--c-text);
   }
 
   .resume-contact {
@@ -243,33 +215,6 @@ const credited = (c: (typeof resume.credits)[number]) =>
   }
 
   .credit-role { font-variant-numeric: tabular-nums; }
-
-  /* ---------- Experience ---------- */
-  .roles { display: grid; gap: var(--s-7); }
-
-  .role-head { margin-bottom: var(--s-3); }
-
-  .role-title { font-size: var(--t-lg); font-weight: 500; }
-
-  .role-company { color: var(--c-text-muted); }
-
-  .role-dates {
-    font-size: var(--t-sm);
-    color: var(--c-text-faint);
-    font-variant-numeric: tabular-nums;
-    margin-top: var(--s-1);
-  }
-
-  .role-bullets {
-    margin: 0;
-    padding-left: var(--s-5);
-    display: grid;
-    gap: var(--s-2);
-    color: var(--c-text-muted);
-    max-width: 54rem;
-  }
-
-  .role-bullets li::marker { color: var(--c-text-faint); }
 
   /* ---------- Education + Skills ---------- */
   .section-split { display: grid; gap: 0; }
