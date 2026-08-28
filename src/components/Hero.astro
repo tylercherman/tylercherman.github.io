@@ -216,15 +216,26 @@ const hasVideo = Boolean(hero.video);
     }
   }
 
+  /*
+   * Opacity and translate only — deliberately NOT letter-spacing.
+   *
+   * This animation used to run tracking from +0.02em to -0.045em, which made the name
+   * measurably WIDER at the start than at the end. Between roughly 393px and 428px of
+   * viewport — Pixel, iPhone 16 Pro, 14 Plus, 14 Pro Max — that extra width pushed
+   * "CHERMAN" onto a second line, which then snapped back to one line as the tracking
+   * tightened. A visible reflow on first paint.
+   *
+   * Tightening the start value instead would only move the problem to a different band
+   * of widths. Anything that animates text width can reflow; opacity and transform
+   * cannot, which is the same rule the scroll reveals follow.
+   */
   @keyframes hero-settle {
     from {
       opacity: 0;
-      letter-spacing: 0.02em;
       translate: 0 10px;
     }
     to {
       opacity: 1;
-      letter-spacing: var(--tracking-display);
       translate: 0 0;
     }
   }
