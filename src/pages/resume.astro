@@ -19,7 +19,7 @@ import Base from '../layouts/Base.astro';
 import resume from '../data/resume.json';
 import site from '../data/site.json';
 import copy from '../data/copy.json';
-import analog from '../assets/analog.jpg';
+import headshot from '../assets/tyler-cherman-headshot.jpg';
 
 const description =
   `Resume and selected credits for ${resume.name}, ${resume.title.replace(/\.$/, '')} ` +
@@ -35,17 +35,17 @@ const credited = (c: (typeof resume.credits)[number]) =>
   <div class="resume wrap">
     <header class="resume-head" data-reveal>
       {/*
-        The Analog portrait sits in the header rather than on the Contact page. It
-        fills the space the "Download PDF" button used to occupy, and unlike on
-        Contact it doesn't compete with a form for attention — so it can stay visible
-        on phones instead of being hidden at narrow widths.
+        The headshot, sized to match the text block beside it. It only ever renders
+        at 74–96px wide, so its modest 396px source is more than enough here — this
+        is a better home for it than the About page, where it was displayed near
+        native size and had no resolution to spare.
       */}
       <figure class="resume-figure">
         <Image
-          src={analog}
-          alt={`${site.name} seated on a vintage CRT monitor showing the same shot with burned-in timecode.`}
-          widths={[180, 300, 420]}
-          sizes="(max-width: 40rem) 96px, 150px"
+          src={headshot}
+          alt={`${site.name}, editor and movie maker based in Portland, Oregon.`}
+          widths={[150, 220, 300]}
+          sizes="(max-width: 40rem) 74px, 96px"
           loading="eager"
           class="resume-photo"
         />
@@ -181,12 +181,17 @@ const credited = (c: (typeof resume.credits)[number]) =>
 
   .resume-identity { min-width: 0; }
 
-  /* Same display face as the hero name, so the two pages read as one system. */
+  /*
+   * Same display face as the hero name, so the two pages read as one system — but
+   * deliberately NOT the hero's tracking. The hero runs at --tracking-display
+   * (-0.045em), which suits a 144px headline where tight letterfitting reads as
+   * confident. At this size that same value crowded the letters, so it's opened up.
+   */
   .resume-name {
     font-family: var(--font-display);
     font-size: clamp(2rem, 3.2vw + 1.1rem, 3.25rem);
     font-weight: var(--weight-display);
-    letter-spacing: var(--tracking-display);
+    letter-spacing: -0.015em;
     line-height: 1;
   }
 
