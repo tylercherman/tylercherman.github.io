@@ -12,7 +12,7 @@
     "labels": {
       "name": "Name",
       "email": "Email",
-      "project": "Project",
+      "subject": "Subject",
       "message": "Message"
     }
   },

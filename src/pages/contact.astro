@@ -67,8 +67,15 @@ const description =
         </div>
 
         <div class="field">
-          <label for="project">{copy.contact.labels.project} <span class="optional">(optional)</span></label>
-          <input id="project" name="project" type="text" />
+          <label for="subject">{copy.contact.labels.subject}</label>
+          {/*
+            Named `_subject`, which is a Formspree directive rather than an ordinary
+            field: whatever is typed here becomes the SUBJECT LINE of the notification
+            email. So the inbox shows "Nike spot — Q3" instead of a generic "New
+            submission from...". Rename it to plain "subject" if it should appear in
+            the body instead.
+          */}
+          <input id="subject" name="_subject" type="text" required />
         </div>
 
         <div class="field">
@@ -209,11 +216,6 @@ const description =
     color: var(--c-text-muted);
   }
 
-  .optional {
-    text-transform: none;
-    letter-spacing: 0;
-    color: var(--c-text-faint);
-  }
 
   input,
   textarea {
