@@ -28,16 +28,11 @@ const description =
         <h1 class="contact-h">{copy.contact.heading}</h1>
         <p class="contact-lede">{copy.contact.lede}</p>
 
-        <p class="contact-direct">
-          {/*
-            Astro 7 collapses whitespace between elements per JSX conventions, so
-            a newline before a link no longer renders as a space. The explicit
-            {' '} is required or this reads "directly attycherman@gmail.com".
-          */}
-          {copy.contact.directPrefix}{' '}
-          <a href={`mailto:${site.email}`}>{site.email}</a>.
-        </p>
-
+        {/*
+          The "email me directly" line is deliberately gone. A mailto: address in the
+          page source is trivially harvested by scrapers, and the form already provides
+          a route that doesn't expose it.
+        */}
       </div>
 
       <form
@@ -184,18 +179,8 @@ const description =
     max-width: 26rem;
   }
 
-  .contact-direct {
-    margin-top: var(--s-5);
-    font-size: var(--t-sm);
-    color: var(--c-text-faint);
-  }
 
-  .contact-direct a {
-    color: var(--c-text-muted);
-    border-bottom: 1px solid var(--c-line-strong);
-  }
 
-  .contact-direct a:hover { color: var(--c-text); border-color: var(--c-text); }
 
 
 

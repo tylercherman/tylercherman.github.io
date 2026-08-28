@@ -7,7 +7,7 @@ vimeoId: "905002018"
 width: 1920
 height: 3413
 duration: 33
-posterPosition: "center top"
+posterPosition: "center"
 poster: ../../assets/posters/retail-billboard.jpg
 alt: "Still from the vertical Nike commercial Retail Billboard, edited by Tyler Cherman."
 draft: false
