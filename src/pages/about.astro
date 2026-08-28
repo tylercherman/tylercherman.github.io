@@ -12,7 +12,7 @@
  */
 import { Image } from 'astro:assets';
 import Base from '../layouts/Base.astro';
-import portrait from '../assets/tyler-cherman-portrait.jpg';
+import portrait from '../assets/tyler-cherman-headshot.jpg';
 import site from '../data/site.json';
 import copy from '../data/copy.json';
 import { Content as AboutBody, frontmatter } from '../copy/about.md';
@@ -39,11 +39,17 @@ const description = frontmatter.description ?? site.description;
       </div>
 
       <figure class="about-figure" data-reveal style="--reveal-delay: 120ms;">
+        {/*
+          The source is 396x594. `widths` deliberately stops at the native width —
+          asking Astro for larger variants would upscale, adding bytes without adding
+          detail and looking softer for it. `max-width` on the figure below stops the
+          layout stretching it past its real size.
+        */}
         <Image
           src={portrait}
-          alt={`${site.name}, editor, seated on a vintage CRT monitor showing the same shot with burned-in timecode.`}
-          widths={[420, 700, 1100, 1796]}
-          sizes="(max-width: 60rem) 100vw, 40vw"
+          alt={`${site.name}, editor and movie maker based in Portland, Oregon.`}
+          widths={[280, 396]}
+          sizes="(max-width: 60rem) 90vw, 30vw"
           loading="eager"
           fetchpriority="high"
           class="about-photo"
@@ -128,7 +134,11 @@ const description = frontmatter.description ?? site.description;
     border-color: var(--c-text);
   }
 
-  .about-figure { margin: 0; }
+  .about-figure {
+    margin: 0;
+    /* Never display it larger than its native 396px — beyond that it goes soft. */
+    max-width: 396px;
+  }
 
   .about-photo {
     width: 100%;

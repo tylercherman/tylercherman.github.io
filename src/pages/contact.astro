@@ -10,9 +10,11 @@
  * is unavailable the plain form POST still works — that's why `action` and `method`
  * are real attributes rather than being wired up in script.
  */
+import { Image } from 'astro:assets';
 import Base from '../layouts/Base.astro';
 import site from '../data/site.json';
 import copy from '../data/copy.json';
+import analog from '../assets/analog.jpg';
 
 const endpoint = `https://formspree.io/f/${site.formspreeId}`;
 
@@ -37,6 +39,22 @@ const description =
           {copy.contact.directPrefix}{' '}
           <a href={`mailto:${site.email}`}>{site.email}</a>.
         </p>
+
+        {/*
+          The Analog portrait. It sits under the intro rather than beside the form so
+          the form stays the first thing reachable — this is the page where someone is
+          trying to send a message, not look at pictures.
+        */}
+        <figure class="contact-figure">
+          <Image
+            src={analog}
+            alt={`${site.name} seated on a vintage CRT monitor showing the same shot with burned-in timecode.`}
+            widths={[420, 700, 1100]}
+            sizes="(max-width: 56rem) 70vw, 26vw"
+            loading="lazy"
+            class="contact-photo"
+          />
+        </figure>
       </div>
 
       <form
@@ -188,6 +206,23 @@ const description =
   }
 
   .contact-direct a:hover { color: var(--c-text); border-color: var(--c-text); }
+
+  .contact-figure {
+    margin: var(--s-7) 0 0;
+    max-width: 22rem;
+  }
+
+  .contact-photo {
+    width: 100%;
+    height: auto;
+    border-radius: var(--radius);
+  }
+
+  /* On a phone the form comes first and the picture would push it below the fold,
+     so it's hidden there rather than made small. */
+  @media (max-width: 56rem) {
+    .contact-figure { display: none; }
+  }
 
   /* ---------- Form ---------- */
   .form {

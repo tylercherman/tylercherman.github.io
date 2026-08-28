@@ -15,8 +15,8 @@
   "hero": {
     "headline": "Tyler Cherman",
     "roles": ["Editor", "Creative"],
-    "video": null,
-    "_videoNote": "Set to \"/video/hero.mp4\" once the file is in public/video/. While null, the placeholder still is used. See public/video/README.md for export specs."
+    "video": "/video/hero.mp4",
+    "_videoNote": "Set to null to fall back to the placeholder still. The file is 9 MB at 1156 kbps, 64s, no audio track — every visitor downloads it, so keep any replacement in that range. Specs in public/video/README.md."
   },
   "work": {
     "heading": "Selected Work",
