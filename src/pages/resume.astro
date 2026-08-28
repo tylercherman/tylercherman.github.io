@@ -29,6 +29,20 @@ const description =
 /** Compose the "Type — Client" line, skipping whichever part is missing. */
 const credited = (c: (typeof resume.credits)[number]) =>
   [c.type, c.client].filter(Boolean).join(' · ');
+
+/*
+ * The email address is base64-encoded here and assembled by script in the browser, so
+ * it never appears in the page source as readable text or as a mailto: href.
+ *
+ * This is not encryption and isn't meant to be — base64 is trivially reversible. It
+ * defeats the bulk harvesters that regex a page for `mailto:` or an @-pattern, which is
+ * where address-scraping spam actually comes from. A scraper written specifically to
+ * target this site would get through, but nobody is doing that.
+ *
+ * Without JavaScript the link falls back to the contact form, so there is always a
+ * route to reach Tyler.
+ */
+const encodedEmail = Buffer.from(resume.email, 'utf8').toString('base64');
 ---
 
 <Base title="Resume" description={description} wide>
@@ -57,7 +71,11 @@ const credited = (c: (typeof resume.credits)[number]) =>
         <p class="resume-contact">
           <span>{resume.location}</span>
           <span aria-hidden="true">·</span>
-          <a href={`mailto:${resume.email}`}>{resume.email}</a>
+          {/*
+            Falls back to the contact form; the script swaps in a mailto: and the
+            address itself once the page is live.
+          */}
+          <a class="js-email" href="/contact" data-e={encodedEmail}>Email</a>
         </p>
       </div>
     </header>
@@ -121,6 +139,25 @@ const credited = (c: (typeof resume.credits)[number]) =>
     </p>
   </div>
 </Base>
+
+<script>
+  /*
+   * Assemble the email address client-side. See the note in the frontmatter for why:
+   * it keeps the address out of the page source, where bulk harvesters read it.
+   */
+  document.querySelectorAll<HTMLAnchorElement>('a.js-email').forEach((el) => {
+    const encoded = el.dataset.e;
+    if (!encoded) return;
+    try {
+      const address = atob(encoded);
+      el.href = `mailto:${address}`;
+      el.textContent = address;
+    } catch {
+      // Decoding failed for some reason — leave the contact-form fallback in place
+      // rather than showing a broken link.
+    }
+  });
+</script>
 
 <style>
   .resume {
